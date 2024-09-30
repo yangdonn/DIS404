@@ -5,7 +5,7 @@ import {
   IconClipboardList,
   IconCalendarTime,
   IconUsers,
-  IconHelp,
+  IconChartBar,
   IconLogin,
   IconMoodHappy,
   IconTypography,
@@ -35,16 +35,10 @@ const Menuitems = [
   }, 
   {
     id: uniqueId(),
-    title: "About us",
-    icon: IconUsers, 
-    href: "/Aboutus", 
+    title: "Statistics",
+    icon: IconChartBar, 
+    href: "/Statistics", 
   }, 
-  {
-    id: uniqueId(),
-    title: "Help",
-    icon: IconHelp, 
-    href: "/Help", 
-  },
 
   {
     navlabel: true,
