@@ -48,51 +48,6 @@ export const PUT = async (req, {params}) =>{
     }
 }
 
-export const PATCH = async (req, { params }) => {
-    const id = params.id;
-
-    console.log('The id is ', id);
-    const updateData = await req.json();
-
-    const fields = [];
-    const values = [];
-
-    for (const [key, value] of Object.entries(updateData)) {
-        fields.push(key);
-        values.push(value);
-    }
-    console.log(fields.join(', '));
-    console.log(id);
-    console.log(values);
-    console.log(`UPDATE club SET ${fields.map(field => `${field} = ?`).join(', ')} WHERE clubid = ${id}`)
-
-    if (fields.length === 0) {
-        return new Response('No data to update', { status: 400 });
-    }
-
-    // Correctly format the SET clause
-    const query = `UPDATE club SET ${fields.map(field => `${field} = ?`).join(', ')} WHERE clubid = ${id}`;
-    values.push(id);
-
-    try {
-        await connectToDB();
-        const pool = getPool();
-
-        const result = await pool.query(query, values);
-
-        console.log('This is value: ', values);
-
-        if (result.rowCount === 0) {
-            return new Response('There is no such club', { status: 404 });
-        }
-        return new Response(JSON.stringify({ message: 'Club updated successfully' }), { status: 200 });
-    } catch (error) {
-        console.error('Error updating club:', error); // Log error for debugging
-        return new Response('Error updating club', { status: 500 });
-    }
-};
-
-
 export const DELETE = async (req, { params}) => {
     const id = params.id;
 
@@ -104,7 +59,7 @@ export const DELETE = async (req, { params}) => {
 
          const result = await pool.query('DELETE FROM club WHERE clubid = $1', [id]);
 
-         if(result.row ==- 0){
+         if(result.rowCount === 0){
             return new Response(' There is no such club', { status: 404 });
          }
          return new Response(JSON.stringify({ message: 'Club deleted successfully'}), { status: 200 });

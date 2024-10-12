@@ -8,20 +8,20 @@ import interactionPlugin from "@fullcalendar/interaction";
 import "./EventCalendar.css";
 
 function Calendar() {
-    return (
-        <div>
-            <Fullcalendar
-                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                initialView={"dayGridMonth"}
-                headerToolbar={{
-                    start: "today prev,next", // will normally be on the left. if RTL, will be on the right
-                    center: "title",
-                    end: "dayGridMonth,timeGridWeek,timeGridDay", // will normally be on the right. if RTL, will be on the left
-                }}
-                height={"90vh"}
-            />
-        </div>
-    );
+  return (
+    <div>
+      <Fullcalendar
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        initialView={"dayGridMonth"}
+        headerToolbar={{
+          start: "today prev,next", // will normally be on the left. if RTL, will be on the right
+          center: "title",
+          end: "dayGridMonth,timeGridWeek,timeGridDay", // will normally be on the right. if RTL, will be on the left
+        }}
+        height={"90vh"}
+      />
+    </div>
+  );
 }
 
 export default Calendar;
