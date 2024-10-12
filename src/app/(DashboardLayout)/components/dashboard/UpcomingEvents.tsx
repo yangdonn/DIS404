@@ -1,3 +1,4 @@
+'use client'
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
 import {
   Timeline,
@@ -9,70 +10,67 @@ import {
   TimelineContent,
   timelineOppositeContentClasses,
 } from '@mui/lab';
-import { Link, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 
-const UpcomingEvents = () => {
+// Define the type for an individual event
+interface Event {
+  date: string;
+  title: string;
+}
+
+// Define the type for the props of the EventTimeline component
+interface EventTimelineProps {
+  events: Event[];
+  onEventClick: (date: string) => void;
+  title: string;
+}
+
+const EventTimeline: React.FC<EventTimelineProps> = ({ events, onEventClick, title }) => {
   return (
-    <DashboardCard title="Upcoming Events">
-      <>
-        <Timeline
-          className="theme-timeline"
-          nonce={undefined}
-          onResize={undefined}
-          onResizeCapture={undefined}
-          sx={{
-            p: 0,
-            mb: '-40px',
-            '& .MuiTimelineConnector-root': {
-              width: '1px',
-              backgroundColor: '#efefef'
-            },
-            [`& .${timelineOppositeContentClasses.root}`]: {
-              flex: 0.5,
-              paddingLeft: 0,
-            },
-          }}
-        >
-          <TimelineItem>
-            <TimelineOppositeContent>27/10/2024</TimelineOppositeContent>
+    <DashboardCard title={title}>
+      <Timeline
+        className="theme-timeline"
+        sx={{
+          p: 0,
+          mb: '-40px',
+          '& .MuiTimelineConnector-root': {
+            width: '1px',
+            backgroundColor: '#efefef'
+          },
+          [`& .${timelineOppositeContentClasses.root}`]: {
+            flex: 0.5,
+            paddingLeft: 0,
+          },
+        }}
+      >
+        {events.map((event: Event, index: number) => (
+          <TimelineItem
+            key={index}
+            onClick={() => onEventClick(event.date)}
+            style={{ cursor: 'pointer' }}
+          >
+            <TimelineOppositeContent>{event.date}</TimelineOppositeContent>
             <TimelineSeparator>
               <TimelineDot color="primary" variant="outlined" />
-              <TimelineConnector />
+              {index < events.length - 1 && <TimelineConnector />}
             </TimelineSeparator>
-            <TimelineContent>ICPC</TimelineContent>
+            <TimelineContent>{event.title}</TimelineContent>
           </TimelineItem>
-          <TimelineItem>
-            <TimelineOppositeContent>02/11/2024</TimelineOppositeContent>
-            <TimelineSeparator>
-              <TimelineDot color="secondary" variant="outlined" />
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent>
-              <Typography>Event 2</Typography>{' '}
-            </TimelineContent>
-          </TimelineItem>
-          <TimelineItem>
-            <TimelineOppositeContent>15/11/2024</TimelineOppositeContent>
-            <TimelineSeparator>
-              <TimelineDot color="success" variant="outlined" />
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent>Event 3</TimelineContent>
-          </TimelineItem>
-          <TimelineItem>
-            <TimelineOppositeContent>26/11/2024</TimelineOppositeContent>
-            <TimelineSeparator>
-              <TimelineDot color="warning" variant="outlined" />
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent>
-              <Typography>Event 4</Typography>{' '}
-            </TimelineContent>
-          </TimelineItem>
-        </Timeline>
-      </>
+        ))}
+      </Timeline>
     </DashboardCard>
   );
+};
+
+// Define the type for the props of the UpcomingEvents component
+interface UpcomingEventsProps {
+  events: Event[];
+  onEventClick: (date: string) => void;
+}
+
+const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, onEventClick }) => {
+  const upcomingEvents = events.filter((event) => new Date(event.date) >= new Date());
+  return <EventTimeline events={upcomingEvents} onEventClick={onEventClick} title="Upcoming Events" />;
 };
 
 export default UpcomingEvents;
