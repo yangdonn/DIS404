@@ -1,5 +1,11 @@
-"use client";
+"use client"
+
 import Link from "next/link";
+import { useState } from "react";
+import { signIn } from 'next-auth/react';
+import { useRouter } from "next/navigation";
+
+
 import { Grid, Box, Card, Stack, Typography } from "@mui/material";
 // components
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
@@ -7,8 +13,41 @@ import Logo from "@/app/(DashboardLayout)/layout/shared/logo/Logo";
 import AuthLogin from "../auth/AuthLogin";
 
 const Login2 = () => {
+  console.log('Inside login page')
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const router = useRouter();
+
+  const handleSubmit = async(e: React.FormEvent) => {
+    console.log('Handle Submitetd called');
+    e.preventDefault();
+
+    if (!username || !password) {
+      console.error("Username and password are required.");
+      alert("Please enter both username and password."); // Optional: Display an alert
+      return; // Exit if fields are empty
+    }
+    const result = await signIn('credentials',{
+      redirect: false,
+      username,
+      password
+    });
+
+    console.log('Login username', username)
+    if(result?.error){
+      console.error(result.error);
+      alert("Invalid username or password."); // Optional: Display
+    } else{
+      console.log('login sucesfull');
+
+      router.push('/');
+    }
+  }
+
   return (
     <PageContainer title="Login" description="this is Login page">
+
       <Box
         sx={{
           position: "relative",
@@ -47,45 +86,52 @@ const Login2 = () => {
               <Box display="flex" alignItems="center" justifyContent="center">
                 <Logo />
               </Box>
-              <AuthLogin
-                subtext={
-                  <Typography
-                    variant="subtitle1"
-                    textAlign="center"
-                    color="textSecondary"
-                    mb={1}
-                  >
-                    Your Social Campaigns
-                  </Typography>
-                }
-                subtitle={
-                  <Stack
-                    direction="row"
-                    spacing={1}
-                    justifyContent="center"
-                    mt={3}
-                  >
+              <form onSubmit ={handleSubmit}>
+                <AuthLogin
+                  username={username}
+                  password={password}
+                  setUsername={setUsername}
+                  setPassword={setPassword}
+                  handleSubmit={handleSubmit}
+                  subtext={
                     <Typography
+                      variant="subtitle1"
+                      textAlign="center"
                       color="textSecondary"
-                      variant="h6"
-                      fontWeight="500"
+                      mb={1}
                     >
-                      New to Modernize?
+                      Your Social Campaigns
                     </Typography>
-                    <Typography
-                      component={Link}
-                      href="/authentication/register"
-                      fontWeight="500"
-                      sx={{
-                        textDecoration: "none",
-                        color: "primary.main",
-                      }}
+                  }
+                  subtitle={
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      justifyContent="center"
+                      mt={3}
                     >
-                      Create an account
-                    </Typography>
-                  </Stack>
-                }
-              />
+                      <Typography
+                        color="textSecondary"
+                        variant="h6"
+                        fontWeight="500"
+                      >
+                        New to Modernize?
+                      </Typography>
+                      <Typography
+                        component={Link}
+                        href="/authentication/register"
+                        fontWeight="500"
+                        sx={{
+                          textDecoration: "none",
+                          color: "primary.main",
+                        }}
+                      >
+                        Create an account
+                      </Typography>
+                    </Stack>
+                  }
+                />
+              </form>
             </Card>
           </Grid>
         </Grid>
