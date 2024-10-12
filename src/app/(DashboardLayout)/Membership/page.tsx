@@ -193,7 +193,7 @@ const Modal: React.FC<ModalProps> = ({ isVisible, onClose, onSubmit, memberData,
   if (!isVisible) return null;
 
   return (
-    <div style={styles.modalOverlay}>
+    <div style={styles.modalOverlay as React.CSSProperties}>
       <div style={styles.modalContent}>
         <h2 style={styles.modalTitle}>{mode === 'edit' ? 'Edit Member' : 'Add New Member'}</h2>
         <p style={styles.modalSubTitle}>{mode === 'edit' ? 'Edit member details' : 'Invite new members to the club'}</p>

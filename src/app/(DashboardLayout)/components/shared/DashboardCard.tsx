@@ -1,5 +1,7 @@
+"use client"
 import React from "react";
 import { Card, CardContent, Typography, Stack, Box } from "@mui/material";
+import { useSession, signOut } from "next-auth/react";
 
 type Props = {
   title?: string;
@@ -24,6 +26,7 @@ const DashboardCard = ({
   headsubtitle,
   middlecontent,
 }: Props) => {
+  const { data: session } = useSession();
   return (
     <Card sx={{ padding: 0 }} elevation={9} variant={undefined}>
       {cardheading ? (

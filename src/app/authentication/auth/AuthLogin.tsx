@@ -16,9 +16,17 @@ interface loginType {
   title?: string;
   subtitle?: JSX.Element | JSX.Element[];
   subtext?: JSX.Element | JSX.Element[];
+  username?: string,
+  password?: string
+  setUsername: (username: string) => void;  
+  setPassword: (password: string) => void;
+  handleSubmit: (e: React.FormEvent) => void; 
 }
 
-const AuthLogin = ({ title, subtitle, subtext }: loginType) => (
+
+
+const AuthLogin = ({ title, subtitle, subtext,username, password, setUsername, setPassword, handleSubmit }: loginType) => (
+  
   <>
     {title ? (
       <Typography fontWeight="700" variant="h2" mb={1}>
@@ -39,7 +47,12 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => (
         >
           Username
         </Typography>
-        <CustomTextField variant="outlined" fullWidth />
+        <CustomTextField 
+          variant="outlined" 
+          fullWidth
+          value={username}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
+        />
       </Box>
       <Box mt="25px">
         <Typography
@@ -51,7 +64,13 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => (
         >
           Password
         </Typography>
-        <CustomTextField type="password" variant="outlined" fullWidth />
+        <CustomTextField
+         type="password"
+         variant="outlined" 
+         fullWidth 
+         value={password}
+         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} 
+        />
       </Box>
       <Stack
         justifyContent="space-between"
@@ -84,8 +103,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => (
         variant="contained"
         size="large"
         fullWidth
-        component={Link}
-        href="/"
+        onClick={handleSubmit} // Call handleSubmit on click
         type="submit"
       >
         Sign In
