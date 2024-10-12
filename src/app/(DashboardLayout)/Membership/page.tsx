@@ -131,6 +131,13 @@ interface ModalProps {
   };
   mode: 'edit' | 'add';                // Either 'edit' or 'add' mode
 }
+interface Member {
+  name: string;
+  studentnum: string;
+  email: string;
+  year: number;
+  department: string;
+}
 
 const Modal: React.FC<ModalProps> = ({ isVisible, onClose, onSubmit, memberData, mode }) => {
   // Set initial member data based on mode
@@ -312,9 +319,22 @@ const MembersTable = () => {
     );
     setModalVisible(false); // Close the modal after submission
   };
+  // Delete member function
+  const handleDeleteMember = (studentnum) => {
+    // Filter out the member whose studentnum matches
+    setMembers((prev) => prev.filter(member => member.studentnum !== studentnum));
+  };
 
-  const openEditModal = (member) => {
-    setCurrentMember(member);
+  const openEditModal = (member: Member) => {
+    const [firstName, lastName] = member.name.split(' ');
+  setCurrentMember({
+    firstName,
+    lastName,
+    studentnum: member.studentnum,
+    email: member.email,
+    year: member.year,
+    department: member.department,
+  });
     setMode('edit');
     setModalVisible(true);
   };
@@ -369,7 +389,10 @@ const MembersTable = () => {
                 <div style={styles.buttonContainer}>
                   {/* Pass the correct member to openEditModal */}
                   <button onClick={() => openEditModal(member)} style={styles.editButton}>Edit</button>
-                  <button style={styles.deleteButton}>Delete</button>
+                  {/* Connect delete button with delete handler */}
+          <button 
+            onClick={() => handleDeleteMember(member.studentnum)} 
+            style={styles.deleteButton}>Delete</button>
                 </div>
               </td>
             </tr>
