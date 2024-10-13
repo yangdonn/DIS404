@@ -117,18 +117,20 @@ const membersData = [
   }
   // Additional data can be added here...
 ];
+
+interface MemberData {
+  firstName: string;
+  lastName: string;
+  studentnum: string;
+  email: string;
+  year: number;
+  department: string;
+}
 interface ModalProps {
   isVisible: boolean;                  // Boolean for modal visibility
   onClose: () => void;                 // Function for closing modal
-  onSubmit: () => void;                // Function for form submission
-  memberData?: {    
-    firstName: string,
-    lastName: string,                   // Optional memberData object
-    studentnum: string;
-    email: string;
-    year: number;
-    department: string;
-  };
+  onSubmit: (member: MemberData) => void;                // Function for form submission
+  memberData?: MemberData;
   mode: 'edit' | 'add';                // Either 'edit' or 'add' mode
 }
 interface Member {
@@ -141,7 +143,7 @@ interface Member {
 
 const Modal: React.FC<ModalProps> = ({ isVisible, onClose, onSubmit, memberData, mode }) => {
   // Set initial member data based on mode
-  const [newMember, setNewMember] = useState(memberData || {
+  const [newMember, setNewMember] = useState<MemberData>(memberData || {
     firstName: '',
     lastName: '',
     studentnum: '',
@@ -149,6 +151,14 @@ const Modal: React.FC<ModalProps> = ({ isVisible, onClose, onSubmit, memberData,
     year: 1,
     department: '',
   });
+
+  const [errors, setErrors] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    studentnum: '',
+  });
+
   useEffect(() => {
     if (mode === 'edit' && memberData) {
       // const [firstName, lastName] = memberData.name.split(' ');
@@ -160,7 +170,7 @@ const Modal: React.FC<ModalProps> = ({ isVisible, onClose, onSubmit, memberData,
         year: memberData.year,
         department: memberData.department,
       });
-    } else {
+    } else if (mode == 'add'){
       setNewMember({
         firstName: '',
         lastName: '',
@@ -177,8 +187,48 @@ const Modal: React.FC<ModalProps> = ({ isVisible, onClose, onSubmit, memberData,
     setNewMember((prev) => ({ ...prev, [name]: value }));
   };
 
+  const validateForm = () => {
+    let valid = true;
+    let newErrors = { firstName: '', lastName: '', email: '', studentnum: '' };
+
+    // Name validation (only alphabetic characters)
+    const nameRegex = /^[A-Za-z]+$/;
+    if (!nameRegex.test(newMember.firstName)) {
+      newErrors.firstName = 'First name must contain only alphabetic characters.';
+      valid = false;
+    }
+    if (newMember.lastName && !nameRegex.test(newMember.lastName)) {
+      newErrors.lastName = 'Last name must contain only alphabetic characters.';
+      valid = false;
+    }
+
+    // Email validation (correct format)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newMember.email)) {
+      newErrors.email = 'Please enter a valid email address.';
+      valid = false;
+    }
+    // Student number validation (numeric)
+    const studentNumRegex = /^\d{8}$/; // Regex for 8-digit numeric student numbers
+    if (!studentNumRegex.test(newMember.studentnum)) {
+      newErrors.studentnum = 'Student number must be an 8-digit number.';
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
   const handleSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
+    if (validateForm()) {
+        // If last name is optional, you may want to treat it accordingly
+        const fullName = newMember.lastName ? `${newMember.firstName} ${newMember.lastName}` : newMember.firstName;
+        
+        const newMemberData = {
+          ...newMember,
+          name: fullName,  // Combine firstName and lastName, if present
+        };
     // const fullName = `${newMember.firstName} ${newMember.lastName}`;
   
     // const newMemberData = {
@@ -187,7 +237,9 @@ const Modal: React.FC<ModalProps> = ({ isVisible, onClose, onSubmit, memberData,
     // };
     // backend code 
     // onSubmit();
+    onSubmit(newMemberData); 
     onClose(); // Close modal after submission
+    }
   };
 
   if (!isVisible) return null;
@@ -210,6 +262,7 @@ const Modal: React.FC<ModalProps> = ({ isVisible, onClose, onSubmit, memberData,
                 required
                 style={styles.modalInput}
               />
+              {errors.firstName && <p style={{ color: 'red' }}>{errors.firstName}</p>}
             </div>
             <div style={styles.column}>
               <label>Last Name</label>
@@ -219,9 +272,10 @@ const Modal: React.FC<ModalProps> = ({ isVisible, onClose, onSubmit, memberData,
                 placeholder="Last Name"
                 value={newMember.lastName}
                 onChange={handleChange}
-                required
+                
                 style={styles.modalInput}
               />
+              {errors.lastName && <p style={{ color: 'red' }}>{errors.lastName}</p>}
             </div>
           </div>
 
@@ -237,6 +291,7 @@ const Modal: React.FC<ModalProps> = ({ isVisible, onClose, onSubmit, memberData,
                 required
                 style={styles.modalInput}
               />
+               {errors.studentnum && <p style={{ color: 'red' }}>{errors.studentnum}</p>} {/* Render the error message */}
             </div>
             <div style={styles.column}>
               <label>Email</label>
@@ -249,6 +304,7 @@ const Modal: React.FC<ModalProps> = ({ isVisible, onClose, onSubmit, memberData,
                 required
                 style={styles.modalInput}
               />
+              {errors.email && <p style={{ color: 'red' }}>{errors.email}</p>}
             </div>
           </div>
 
@@ -302,31 +358,56 @@ const Modal: React.FC<ModalProps> = ({ isVisible, onClose, onSubmit, memberData,
 
 const MembersTable = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [currentMember, setCurrentMember] = useState(null);
-  const [members, setMembers] = useState(membersData);
-  const [mode, setMode] = useState('add');
+  const [currentMember, setCurrentMember] = useState<MemberData | null>(null);
+  const [members, setMembers] = useState<Member[]>(membersData);
+  const [mode, setMode] = useState<'edit' | 'add'>('add');
 
-  const handleAddMember = (newMember) => {
-    setMembers((prev) => [...prev, newMember]);
+  const handleAddMember = (newMember: MemberData) => {
+    // Check if the student number already exists in the current members list
+  const isDuplicate = members.some(member => member.studentnum === newMember.studentnum);
+
+  if (isDuplicate) {
+    alert("A member with this student number already exists. Please use a unique student number.");
+    return; // Stop the function if a duplicate is found
+  }
+    const fullName = `${newMember.firstName} ${newMember.lastName}`;
+    const updatedMember: Member = {
+      name: fullName, // Combine firstName and lastName into a full name
+    studentnum: newMember.studentnum,
+    email: newMember.email,
+    year: newMember.year,
+    department: newMember.department,  
+    };
+    setMembers((prev) => [...prev, updatedMember]);
     setModalVisible(false); // Close the modal after adding
   };
 
-  const handleEditMember = (editedMember) => {
+  const handleEditMember = (editedMember: MemberData) => {
+    const fullName = `${editedMember.firstName} ${editedMember.lastName}`;
+    const updatedMember: Member = {
+      name: fullName, // Combine firstName and lastName into a full name
+      studentnum: editedMember.studentnum,
+      email: editedMember.email,
+      year: editedMember.year,
+      department: editedMember.department,
+    };
     setMembers((prev) => 
       prev.map((member) => 
-        member.studentnum === editedMember.studentnum ? editedMember : member
+        member.studentnum === editedMember.studentnum ? updatedMember : member
       )
     );
     setModalVisible(false); // Close the modal after submission
   };
   // Delete member function
-  const handleDeleteMember = (studentnum) => {
+  const handleDeleteMember = (studentnum: string) => {
     // Filter out the member whose studentnum matches
     setMembers((prev) => prev.filter(member => member.studentnum !== studentnum));
   };
 
   const openEditModal = (member: Member) => {
-    const [firstName, lastName] = member.name.split(' ');
+    const nameParts = member.name.split(' ');
+    const firstName = nameParts.shift() || '';
+    const lastName = nameParts.join(' ') || '';
   setCurrentMember({
     firstName,
     lastName,
@@ -340,7 +421,14 @@ const MembersTable = () => {
   };
 
   const openAddModal = () => {
-    setCurrentMember(null); // Reset current member for adding
+    setCurrentMember({
+    firstName: '',
+    lastName: '',
+    studentnum: '',
+    email: '',
+    year: 1,
+    department: '',
+  }); // Reset current member for adding
     setMode('add');
     setModalVisible(true);  // Open the modal for adding
   };
@@ -581,7 +669,3 @@ const styles = {
 };
 
 export default MembersTable;
-
-
-
-
