@@ -1,0 +1,40 @@
+/* App.css */
+
+.input-container {
+  margin-bottom: 20px;
+}
+
+.input-title {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-title label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.input-time {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-time label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.event-container {
+  font-family: Arial, sans-serif; /* Use a consistent font */
+  padding: 5px;
+}
+
+.event-location {
+  font-size: 14px; /* Adjust font size for location */
+  color: gray; /* Change color for distinction */
+}
+
+.event-time {
+  font-size: 12px; /* Adjust font size for time */
+  color: lightgray; /* Change color for distinction */
+}
