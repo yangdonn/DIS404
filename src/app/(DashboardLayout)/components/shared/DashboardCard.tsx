@@ -15,7 +15,7 @@ type Props = {
   middlecontent?: string | JSX.Element;
 };
 
-const DashboardCard = ({
+const DashboardCard = ({ 
   title,
   subtitle,
   children,

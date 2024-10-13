@@ -19,6 +19,7 @@ const Calendar: React.FC<CalendarProps> = ({ events, selectedDate }) => {
     return events.some((event) => event.date === formattedDate);
   };
 
+
   return (
     <DashboardCard>
       <Box
@@ -55,7 +56,7 @@ const Calendar: React.FC<CalendarProps> = ({ events, selectedDate }) => {
                   '&.Mui-selected': {
                   backgroundColor: '#00ac4f', // Selected event day with darker shade
                   color: 'white', // Disabled day text color
-                },
+                  },
                 },
               },
             }}

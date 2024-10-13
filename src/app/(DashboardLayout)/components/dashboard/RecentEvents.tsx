@@ -39,7 +39,7 @@ const EventTimeline: React.FC<EventTimelineProps> = ({ events, onEventClick, tit
             backgroundColor: '#efefef'
           },
           [`& .${timelineOppositeContentClasses.root}`]: {
-            flex: 0.5,
+            flex: 0.6,
             paddingLeft: 0,
           },
         }}
@@ -75,3 +75,6 @@ const RecentEvents: React.FC<RecentEventsProps> = ({ events, onEventClick }) => 
 };
 
 export default RecentEvents;
+
+
+
