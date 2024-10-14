@@ -80,7 +80,11 @@ const NavItem = ({ item, level, pathDirect, onClick }: ItemType) => {
           >
             {itemIcon}
           </ListItemIcon>
-          <ListItemText>
+          <ListItemText
+            primaryTypographyProps={{
+              fontSize: '1.0rem', // Adjust this value to increase/decrease the font size
+            }}
+            >
             <>{item.title}</>
           </ListItemText>
         </ListItemButton>

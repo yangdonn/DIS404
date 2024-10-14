@@ -277,7 +277,7 @@ const CardGrid: React.FC = () => {
         variant="contained"
         onClick={() => setAddDialogOpen(true)} // Open Add dialog 
         style={{
-          backgroundColor: '#000',
+          backgroundColor: '#00ac4f',
           color: '#fff',
           borderRadius: '5px',
           padding: '10px 20px',

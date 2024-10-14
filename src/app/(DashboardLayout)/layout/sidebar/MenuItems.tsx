@@ -4,12 +4,8 @@ import {
   IconLayoutDashboard,
   IconClipboardList,
   IconCalendarTime,
-  IconUsers,
   IconChartBar,
-  IconLogin,
-  IconMoodHappy,
-  IconTypography,
-  IconUserPlus,
+  IconLogin
 } from "@tabler/icons-react";
 
 import { uniqueId } from "lodash";
@@ -33,12 +29,18 @@ const Menuitems = [
     icon: IconCalendarTime,
     href: "/Events", 
   }, 
+  // {
+  //   id: uniqueId(),
+  //   title: "Statistics",
+  //   icon: IconChartBar, 
+  //   href: "/Statistics", 
+  // }, 
   {
     id: uniqueId(),
-    title: "Statistics",
-    icon: IconChartBar, 
-    href: "/Statistics", 
-  }, 
+    title: "Login",
+    icon: IconLogin, 
+    href: "authentication/login", 
+  },
 ];
 
 export default Menuitems;

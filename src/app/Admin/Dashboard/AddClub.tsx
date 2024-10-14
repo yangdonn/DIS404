@@ -69,80 +69,83 @@ const AddClubDialog: React.FC<AddClubDialogProps> = ({ open, onClose, onSave }) 
           noValidate
           autoComplete="off"
         >
-          <TextField
-            name="clubName"
-            label="Club Name"
-            variant="outlined"
-            value={formValues.clubName}
-            onChange={handleChange}
-            InputProps={{
-              style: { backgroundColor: '#fff', borderRadius: '5px' },
-            }}
-          />
-          <TextField
-            name="advisorName"
-            label="Advisor Name"
-            variant="outlined"
-            value={formValues.advisorName}
-            onChange={handleChange}
-            InputProps={{
-              style: { backgroundColor: '#fff', borderRadius: '5px' },
-            }}
-          />
-          <TextField
-            name="coordinatorName"
-            label="Coordinator Name"
-            variant="outlined"
-            value={formValues.coordinatorName}
-            onChange={handleChange}
-            InputProps={{
-              style: { backgroundColor: '#fff', borderRadius: '5px' },
-            }}
-          />
-          <TextField
-            name="clubDescription"
-            label="Club Description"
-            variant="outlined"
-            multiline
-            rows={3}
-            value={formValues.clubDescription}
-            onChange={handleChange}
-            InputProps={{
-              style: { backgroundColor: '#fff', borderRadius: '5px' },
-            }}
-          />
-          <TextField
-            name="username"
-            label="Username"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={formValues.username}
-            onChange={handleChange}
-            required
-          />
-          <TextField
-            name="password"
-            label="Password"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            type="password"
-            value={formValues.password}
-            onChange={handleChange}
-            required
-          />
-          <TextField
-            name="confirmPassword"
-            label="Confirm Password"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            type="password"
-            value={formValues.confirmPassword}
-            onChange={handleChange}
-            required
-          />
+          <Box sx={{mt:2, mb:-2}}>
+            <TextField
+              name="clubName"
+              label="Club Name"
+              variant="outlined"
+              value={formValues.clubName}
+              onChange={handleChange}
+              InputProps={{
+                style: { backgroundColor: '#fff', borderRadius: '5px' },
+              }}
+            />
+            <TextField
+              name="advisorName"
+              label="Advisor Name"
+              variant="outlined"
+              value={formValues.advisorName}
+              onChange={handleChange}
+              InputProps={{
+                style: { backgroundColor: '#fff', borderRadius: '5px' },
+              }}
+            />
+            <TextField
+              name="coordinatorName"
+              label="Coordinator Name"
+              variant="outlined"
+              value={formValues.coordinatorName}
+              onChange={handleChange}
+              InputProps={{
+                style: { backgroundColor: '#fff', borderRadius: '5px' },
+              }}
+            />
+            <TextField
+              name="clubDescription"
+              label="Club Description"
+              variant="outlined"
+              multiline
+              rows={3}
+              value={formValues.clubDescription}
+              onChange={handleChange}
+              InputProps={{
+                style: { backgroundColor: '#fff', borderRadius: '5px' },
+              }}
+            />
+            <TextField
+              name="username"
+              label="Username"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={formValues.username}
+              onChange={handleChange}
+              required
+            />
+            <TextField
+              name="password"
+              label="Password"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              type="password"
+              value={formValues.password}
+              onChange={handleChange}
+              required
+            />
+            <TextField
+              name="confirmPassword"
+              label="Confirm Password"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              type="password"
+              value={formValues.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+          </Box>
+          
         </Box>
       </DialogContent>
       <DialogActions style={{ justifyContent: 'center', padding: '20px' }}>
@@ -153,8 +156,10 @@ const AddClubDialog: React.FC<AddClubDialogProps> = ({ open, onClose, onSave }) 
             color: '#333',
             borderRadius: '5px',
             padding: '10px 20px',
+            width: 80,
             textTransform: 'none',
           }}
+          
         >
           Cancel
         </Button>
@@ -165,9 +170,11 @@ const AddClubDialog: React.FC<AddClubDialogProps> = ({ open, onClose, onSave }) 
             color: '#fff',
             borderRadius: '5px',
             padding: '10px 20px',
+            width: 80,
             marginLeft: '10px',
             textTransform: 'none',
           }}
+          
           variant="contained"
         >
           Add

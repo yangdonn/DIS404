@@ -45,9 +45,10 @@ const Login2 = () => {
     }
   }
 
+  const imageSrc = "/images/logos/CST_logo.jpg"; 
   return (
     <PageContainer title="Login" description="this is Login page">
-
+        
       <Box
         sx={{
           position: "relative",
@@ -83,9 +84,33 @@ const Login2 = () => {
               elevation={9}
               sx={{ p: 4, zIndex: 1, width: "100%", maxWidth: "500px" }}
             >
-              <Box display="flex" alignItems="center" justifyContent="center">
-                <Logo />
-              </Box>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center', // Horizontally center the items
+                  justifyContent: 'center', // Vertically center the items
+                  height: '100%', // Ensure the container takes the full height of the parent
+                }}
+              >
+                <img
+                  src={imageSrc}
+                  alt="Sidebar Logo"
+                  style={{
+                    width: '100px', // Adjust width as needed
+                    height: '100px', // Adjust height as needed
+                    borderRadius: '50%', // Optional: Make the image circular
+                    justifyContent: 'center',
+                  }}
+                />
+                {/* Text below the image */}
+                <Typography variant="h6" mt={2} >
+                  Club Management System
+                </Typography>
+
+              </div>
+              
+                      
               <form onSubmit ={handleSubmit}>
                 <AuthLogin
                   username={username}
@@ -93,16 +118,7 @@ const Login2 = () => {
                   setUsername={setUsername}
                   setPassword={setPassword}
                   handleSubmit={handleSubmit}
-                  subtext={
-                    <Typography
-                      variant="subtitle1"
-                      textAlign="center"
-                      color="textSecondary"
-                      mb={1}
-                    >
-                      Your Social Campaigns
-                    </Typography>
-                  }
+            
                   subtitle={
                     <Stack
                       direction="row"
@@ -115,7 +131,7 @@ const Login2 = () => {
                         variant="h6"
                         fontWeight="500"
                       >
-                        New to Modernize?
+                        Don't have an account?
                       </Typography>
                       <Typography
                         component={Link}
