@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Grid, Box } from '@mui/material';
 import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
 // components
@@ -8,20 +8,56 @@ import UpcomingEvents from '@/app/(DashboardLayout)/components/dashboard/Upcomin
 import RecentEvents from '@/app/(DashboardLayout)/components/dashboard/RecentEvents';
 import Calendar from './components/dashboard/Calendar';
 import LineGraph from './components/dashboard/LineGraph';
+import { useSession } from 'next-auth/react';
+
+interface Event {
+  date: string;
+  title: string;
+}
 
 const Dashboard = () => {
+  const { data: session } = useSession();
   // State to manage selected event date
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [events, setEvents] = useState([
-    { date: '2024-07-27', title: 'Welcome session' },
-    { date: '2024-08-02', title: 'First club meeting' },
-    { date: '2024-09-15', title: 'Seminar on Emerging Technology' },
-    { date: '2024-09-26', title: 'TechTalk' },
-    { date: '2024-10-27', title: 'ICPC' },
-    { date: '2024-11-02', title: 'Event 2' },
-    { date: '2024-11-15', title: 'Event 3' },
-    { date: '2024-11-26', title: 'Event 4' },
-  ]);
+  // const [events, setEvents] = useState([
+  //   { date: '2024-07-27', title: 'Welcome session' },
+  //   { date: '2024-08-02', title: 'First club meeting' },
+  //   { date: '2024-09-15', title: 'Seminar on Emerging Technology' },
+  //   { date: '2024-09-26', title: 'TechTalk' },
+  //   { date: '2024-10-27', title: 'ICPC' },
+  //   { date: '2024-11-02', title: 'Event 2' },
+  //   { date: '2024-11-15', title: 'Event 3' },
+  //   { date: '2024-11-26', title: 'Event 4' },
+  // ]);
+  const [events, setEvents] = useState<Event[]>([]); // Initialize with an empty array
+
+  const fetchEvents = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/getEvents/${userId}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+  
+      // Transform the fetched data into the required format
+      const structuredEvents = data.map((event: {edate: string; ename: string;}) => ({
+        date: new Date(event.edate).toISOString().split('T')[0], // Assuming you want to use edate as date
+        title: event.ename  // Assuming you want to use ename as title
+      }));
+  
+      setEvents(structuredEvents); // Set the transformed data to events state
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    }
+  };
+  
+
+  useEffect(() => {
+    if (session) {
+      fetchEvents(session.user.mid); // Pass the user ID to fetch events
+    }
+  }, [session]); // Run this effect whenever the session changes
+
 
   // Filter recent events (dates before today)
   const recentEvents = events.filter(event => new Date(event.date) < new Date());

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { signIn } from 'next-auth/react';
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 
 import { Grid, Box, Card, Stack, Typography } from "@mui/material";
@@ -18,6 +19,8 @@ const Login2 = () => {
   const [password, setPassword] = useState("");
 
   const router = useRouter();
+  const { data: session } = useSession();
+  console.log('Debugging Session', session)
 
   const handleSubmit = async(e: React.FormEvent) => {
     console.log('Handle Submitetd called');
@@ -38,10 +41,10 @@ const Login2 = () => {
     if(result?.error){
       console.error(result.error);
       alert("Invalid username or password."); // Optional: Display
-    } else{
-      console.log('login sucesfull');
-
-      router.push('/');
+    } 
+    if(session?.user?.status === 'Admin') router.push('/Admin')
+      else{
+        router.push('/');
     }
   }
 
