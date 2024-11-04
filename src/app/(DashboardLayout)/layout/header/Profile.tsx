@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from "react";
-import { useSession, signOut}  from "next-auth/react";
+import { signOut}  from "next-auth/react";
 import Link from "next/link";
 import {
   Avatar,
@@ -16,7 +16,6 @@ import {
 import { IconListCheck, IconMail, IconUser } from "@tabler/icons-react";
 
 const Profile = () => {
-  const { data: session } = useSession();
   const [anchorEl2, setAnchorEl2] = useState(null);
   const handleClick2 = (event: any) => {
     setAnchorEl2(event.currentTarget);

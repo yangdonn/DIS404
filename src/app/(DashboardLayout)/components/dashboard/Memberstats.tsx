@@ -1,11 +1,55 @@
+'use client'
 import React from 'react';
 import { Box, Typography, Divider } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 import ManIcon from '@mui/icons-material/Man';
 import WomanIcon from '@mui/icons-material/Woman';
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
+import { useSession } from 'next-auth/react';
+import { useState, useEffect } from 'react';
 
 const MemberStats = () => {
+
+    interface MemberCount {
+        stdgender: 'M' | 'F' | 'Total';
+        count: string;
+    }
+    const { data: session } = useSession();
+    const [counts,setCounts] = useState({
+        Total:0,
+        Male:0,
+        Female:0
+    })
+    console.log(session)
+
+    useEffect(() => {
+        const fetchCounts = async () => {
+            if (session) {
+                try {
+                    const id = session.user.mid;
+                    const response = await fetch(`/api/getItems/${id}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    const data = await response.json();
+                    const maleCount = data.find((item: MemberCount) => item.stdgender === 'M')?.count || 0;
+                    const femaleCount = data.find((item: MemberCount) => item.stdgender === 'F')?.count || 0;
+                    const totalCount = data.find((item: MemberCount) => item.stdgender === 'Total')?.count || 0;
+                    
+                    setCounts({ Total: parseInt(totalCount),Male: parseInt(maleCount), Female: parseInt(femaleCount) });
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            }
+        };
+
+        // Only call fetchCounts if session data is available
+        if (session) {
+            fetchCounts();
+        }
+    }, [session]);
   return (
     <Box sx={{ mb: 3 }}>
         <DashboardCard>
@@ -27,7 +71,7 @@ const MemberStats = () => {
                         </Box>
                         <Box ml={2}>
                             <Typography variant="subtitle1" color="GrayText">Total Members</Typography> {/* Smaller font size */}
-                            <Typography variant="h5" fontWeight="bold">100</Typography> {/* Adjusted heading size */}
+                            <Typography variant="h5" fontWeight="bold">{counts.Total}</Typography> {/* Adjusted heading size */}
                         </Box>
                     </Box>
 
@@ -49,7 +93,7 @@ const MemberStats = () => {
                         </Box>
                         <Box ml={2}>
                             <Typography variant="subtitle1" color="GrayText">Male</Typography> {/* Smaller font size */}
-                            <Typography variant="h5" fontWeight="bold">59</Typography> {/* Adjusted heading size */}
+                            <Typography variant="h5" fontWeight="bold">{counts.Male}</Typography> {/* Adjusted heading size */}
                         </Box>
                     </Box>
 
@@ -71,7 +115,7 @@ const MemberStats = () => {
                         </Box>
                         <Box ml={2}>
                             <Typography variant="subtitle1" color="GrayText">Female</Typography> {/* Smaller font size */}
-                            <Typography variant="h5" fontWeight="bold">41</Typography> {/* Adjusted heading size */}
+                            <Typography variant="h5" fontWeight="bold">{counts.Female}</Typography> {/* Adjusted heading size */}
                         </Box>
                     </Box>
                 </Box>

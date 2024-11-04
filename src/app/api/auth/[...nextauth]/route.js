@@ -33,7 +33,9 @@ export const authOptions = {
                     }
                     return {
                         id: userRow.loginid,
+                        mid: userRow.mid,
                         name: userRow.lusername,
+                        status: userRow.status
                     };
 
                 } catch(error){
@@ -45,16 +47,33 @@ export const authOptions = {
     ],
 
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user , trigger}) {
             if (user){
                 token.id = user.id;
+                token.mid = user.mid;
                 token.name = user.name;
+                token.status = user.status;
+            }
+            if (trigger === 'signout'){
+                 token.id = null;
+                 token.mid = null;
+                 token.name = null;
+                 token.status = null;
             }
             return token;
         },
         async session ({ session, token }) {
             session.user.id = token.id;
+            session.user.mid = token.mid;
             session.user.name = token.name;
+            session.user.status = token.status;
+            if (!token.id) {
+                session.user.id = null;
+                session.user.mid = null;
+                session.user.name = null;
+                session.user.status = null;
+            }
+    
             return session;
         }
     },
