@@ -194,14 +194,15 @@ const ProfilePage = () => {
               fullWidth
               onClick={() => setShowChangePassword(!showChangePassword)}
               endIcon={showChangePassword ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              sx={{mb:2}}
             >
               Change Password
             </Button>
             <Collapse in={showChangePassword}>
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 2, mb: 1 }}>
+              {/* <Typography variant="body2" color="textSecondary" sx={{ mt: 2, mb: 1 }}>
                 Your new password must be at least 8 characters long, contain one uppercase letter,
                 one lowercase letter, one number, and one special character.
-              </Typography>
+              </Typography> */}
 
               <TextField
                 fullWidth
@@ -209,7 +210,7 @@ const ProfilePage = () => {
                 label="Current Password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                sx={{ mb: 2 }}
+                sx={{mb: 2 }}
               />
 
               <TextField

@@ -13,42 +13,33 @@ interface OutlinedCardProps {
 }
 
 // Main component for the OutlinedCard
-const OutlinedCard: React.FC<OutlinedCardProps> = ({
-  clubName,
-  advisorName,
-  coordinatorName,
-  onEdit,
-  onDelete,
-}) => {
+const OutlinedCard: React.FC<OutlinedCardProps> = ({ clubName, advisorName, coordinatorName, onEdit, onDelete }) => {
   return (
     <Card variant="outlined" sx={{ maxWidth: 380 }}>
       <CardContent>
         <Typography variant="h5" component="div" sx={{ mb: 2 }}>
           {clubName}
         </Typography>
-        <Typography
-          variant="body2"
-          sx={{ mb: 1, fontSize: "13px", color: "#8d94b3" }}
-        >
+        <Typography variant="body2" sx={{ mb: 1, fontSize: '13px', color: '#8d94b3' }}>
           <strong>Advisor:</strong> {advisorName}
         </Typography>
-        <Typography variant="body2" sx={{ fontSize: "13px", color: "#8d94b3" }}>
+        <Typography variant="body2" sx={{ fontSize: '13px', color: '#8d94b3' }}>
           <strong>Coordinator:</strong> {coordinatorName}
         </Typography>
       </CardContent>
-      <Box sx={{ backgroundColor: "#f8f8f8" }}>
-        <CardActions sx={{ justifyContent: "flex-end" }}>
+      <Box sx={{ backgroundColor: '#f8f8f8' }}>
+        <CardActions sx={{ justifyContent: 'flex-end' }}>
           <Button
             variant="outlined"
             sx={{
-              backgroundColor: "#f4fbf7",
-              color: "#008767",
-              borderColor: "#c8f4dc",
+              backgroundColor: '#f4fbf7',
+              color: '#008767',
+              borderColor: '#c8f4dc',
               borderWidth: 2,
-              "&:hover": {
-                backgroundColor: "#c8f4dc",
-                color: "#004d3e",
-                borderColor: "#007f5f",
+              '&:hover': {
+                backgroundColor: '#c8f4dc',
+                color: '#004d3e',
+                borderColor: '#007f5f',
               },
               mr: 1,
             }}
@@ -59,14 +50,14 @@ const OutlinedCard: React.FC<OutlinedCardProps> = ({
           <Button
             variant="outlined"
             sx={{
-              backgroundColor: "#f9efef",
-              color: "#e43434",
-              borderColor: "#f8dddd",
+              backgroundColor: '#f9efef',
+              color: '#e43434',
+              borderColor: '#f8dddd',
               borderWidth: 2,
-              "&:hover": {
-                backgroundColor: "#f28c8c",
-                color: "white",
-                borderColor: "#9b1b1b",
+              '&:hover': {
+                backgroundColor: '#f28c8c',
+                color: 'white',
+                borderColor: '#9b1b1b',
               },
             }}
             onClick={onDelete}
@@ -83,18 +74,8 @@ const OutlinedCard: React.FC<OutlinedCardProps> = ({
 const EditClubDialog: React.FC<{
   open: boolean;
   onClose: () => void;
-  club: {
-    clubName: string;
-    advisorName: string;
-    coordinatorName: string;
-    clubDescription?: string;
-  };
-  onSave: (updatedClub: {
-    clubName: string;
-    advisorName: string;
-    coordinatorName: string;
-    clubDescription?: string;
-  }) => void;
+  club: { clubName: string; advisorName: string; coordinatorName: string; clubDescription?: string; };
+  onSave: (updatedClub: { clubName: string; advisorName: string; coordinatorName: string; clubDescription?: string; }) => void;
 }> = ({ open, onClose, club, onSave }) => {
   const [formValues, setFormValues] = React.useState(club);
 
@@ -108,22 +89,22 @@ const EditClubDialog: React.FC<{
     onClose();
   };
 
-  // Design part of Edit button
+  //Design part of Edit button
   return (
     <Dialog
       open={open}
       onClose={onClose}
       PaperProps={{
         style: {
-          padding: "20px",
-          borderRadius: "10px",
-          backgroundColor: "#f9f9f9",
-          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+          padding: '20px',
+          borderRadius: '10px',
+          backgroundColor: '#f9f9f9',
+          boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
         },
       }}
     >
       <DialogTitle>
-        <Typography variant="h6" component="div" style={{ fontWeight: "bold" }}>
+        <Typography variant="h6" component="div" style={{ fontWeight: 'bold' }}>
           Edit Club Details
         </Typography>
       </DialogTitle>
@@ -131,12 +112,12 @@ const EditClubDialog: React.FC<{
         <Box
           component="form"
           sx={{
-            "& .MuiTextField-root": { mb: 2, width: "100%" },
+            '& .MuiTextField-root': { mb: 2, width: '100%' },
           }}
           noValidate
           autoComplete="off"
         >
-          <Box sx={{ mt: 2, mb: -2 }}>
+          <Box sx={{mt:2, mb:-2}}>
             <TextField
               name="clubName"
               label="Club Name"
@@ -144,7 +125,7 @@ const EditClubDialog: React.FC<{
               value={formValues.clubName}
               onChange={handleChange}
               InputProps={{
-                style: { backgroundColor: "#fff", borderRadius: "5px" },
+                style: { backgroundColor: '#fff', borderRadius: '5px' },
               }}
             />
             <TextField
@@ -154,7 +135,7 @@ const EditClubDialog: React.FC<{
               value={formValues.advisorName}
               onChange={handleChange}
               InputProps={{
-                style: { backgroundColor: "#fff", borderRadius: "5px" },
+                style: { backgroundColor: '#fff', borderRadius: '5px' },
               }}
             />
             <TextField
@@ -164,7 +145,7 @@ const EditClubDialog: React.FC<{
               value={formValues.coordinatorName}
               onChange={handleChange}
               InputProps={{
-                style: { backgroundColor: "#fff", borderRadius: "5px" },
+                style: { backgroundColor: '#fff', borderRadius: '5px' },
               }}
             />
             <TextField
@@ -173,24 +154,25 @@ const EditClubDialog: React.FC<{
               variant="outlined"
               multiline
               rows={4}
-              value={formValues.clubDescription || ""}
+              value={formValues.clubDescription || ''}
               onChange={handleChange}
               InputProps={{
-                style: { backgroundColor: "#fff", borderRadius: "5px" },
+                style: { backgroundColor: '#fff', borderRadius: '5px' },
               }}
             />
           </Box>
+          
         </Box>
       </DialogContent>
-      <DialogActions style={{ justifyContent: "center", padding: "20px" }}>
+      <DialogActions style={{ justifyContent: 'center', padding: '20px' }}>
         <Button
           onClick={onClose}
           style={{
-            backgroundColor: "#d3d3d3",
-            color: "#333",
-            borderRadius: "5px",
-            padding: "10px 20px",
-            textTransform: "none",
+            backgroundColor: '#d3d3d3',
+            color: '#333',
+            borderRadius: '5px',
+            padding: '10px 20px',
+            textTransform: 'none',
           }}
         >
           Cancel
@@ -198,12 +180,12 @@ const EditClubDialog: React.FC<{
         <Button
           onClick={handleSave}
           style={{
-            backgroundColor: "#000",
-            color: "#fff",
-            borderRadius: "5px",
-            padding: "10px 20px",
-            marginLeft: "10px",
-            textTransform: "none",
+            backgroundColor: '#000',
+            color: '#fff',
+            borderRadius: '5px',
+            padding: '10px 20px',
+            marginLeft: '10px',
+            textTransform: 'none',
           }}
           variant="contained"
         >
@@ -242,22 +224,10 @@ const CardGrid: React.FC = () => {
       setAddDialogOpen(false); 
     };
 
-  const handleEdit = (club: {
-    clubid: string;
-    clubname: string;
-    clubadvisor: string;
-    clubcoordinator: string;
-    clubDescription?: string;
-  }) => {
-    setSelectedClub({
-      clubid: club.club_id,
-      clubName: club.club_name,
-      advisorName: club.advisor_name,
-      coordinatorName: club.member_name,
-      clubDescription: club.club_description || "",
-    });
-    setDialogOpen(true);
-  };
+    const handleEdit = (club: { clubName: string; advisorName: string; coordinatorName: string; clubDescription?: string; }) => {
+      setSelectedClub(club);
+      setDialogOpen(true);
+    };
 
     const handleDeleteClick = (clubName: string) => {
       setClubToDelete(clubName);
@@ -300,84 +270,79 @@ const CardGrid: React.FC = () => {
 
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "end", mb: 2 }}>
-        <Button
-          variant="contained"
-          onClick={() => setAddDialogOpen(true)} // Open Add dialog
-          style={{
-            backgroundColor: "#000",
-            color: "#fff",
-            borderRadius: "5px",
-            padding: "10px 20px",
-            marginLeft: "10px",
-            textTransform: "none",
-          }}
-        >
-          Add New Club
-        </Button>
-      </Box>
+    <Box
+    sx={{ display: 'flex', justifyContent: 'end', mb: 2 }}>
+      <Button
+        variant="contained"
+        onClick={() => setAddDialogOpen(true)} // Open Add dialog 
+        style={{
+          backgroundColor: '#00ac4f',
+          color: '#fff',
+          borderRadius: '5px',
+          padding: '10px 20px',
+          marginLeft: '10px',
+          textTransform: 'none',
+        }}
+      >
+        Add New Club
+      </Button>
+    </Box>
       <Grid container spacing={2}>
         {cardsData.map((card, index) => (
           <Grid item xs={12} sm={6} md={4} key={index}>
             <OutlinedCard
-              clubName={card.club_name}
-              advisorName={card.advisor_name}
-              coordinatorName={card.member_name}
+              clubName={card.clubName}
+              advisorName={card.advisorName}
+              coordinatorName={card.coordinatorName}
               onEdit={() => handleEdit(card)}
-              onDelete={() => handleDeleteClick(card.club_name)}
+              onDelete={() => handleDeleteClick(card.clubName)}
             />
           </Grid>
         ))}
       </Grid>
-      {/* Delete Confirmation Dialog */}
-      <Dialog
-        open={dialogOpen}
-        onClose={handleCancelDelete}
-        PaperProps={{
-          style: {
-            padding: "10px",
-            borderRadius: "10px",
-            backgroundColor: "#f9f9f9",
-            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-          },
-        }}
-      >
+      <Dialog open={dialogOpen} onClose={handleCancelDelete}
+      PaperProps={{
+        style: {
+          padding: '10px',
+          borderRadius: '10px',
+          backgroundColor: '#f9f9f9',
+          boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+        },
+      }}>
         <DialogTitle>Delete Club</DialogTitle>
         <DialogContent>
           Are you sure you want to delete this club?
         </DialogContent>
-        <DialogActions sx={{ justifyContent: "center" }}>
-          <Button
-            onClick={handleCancelDelete}
-            sx={{
-              backgroundColor: "#d9d9d9",
-              color: "#000000",
-              width: 80,
-              borderWidth: 2,
-              "&:hover": {
-                backgroundColor: "#C8C1C1",
-                color: "black",
-                borderColor: "#007f5f",
-              },
-              mr: 1,
-            }}
+        <DialogActions sx={{justifyContent: 'center'}}>
+          <Button onClick={handleCancelDelete}
+          sx={{
+            backgroundColor: '#d9d9d9',
+            color: '#000000',
+            width: 80,
+            borderWidth: 2,
+            '&:hover': {
+              backgroundColor: '#C8C1C1',
+              color: 'black',
+              borderColor: '#007f5f',
+            },
+            mr: 1,
+          }}
           >
             Cancel
           </Button>
-          <Button
-            onClick={handleConfirmDelete}
-            sx={{
-              backgroundColor: "#df0404",
-              color: "#ffffff",
-              width: 80,
-              borderColor: "#f8dddd",
-              borderWidth: 2,
-              "&:hover": {
-                backgroundColor: "#f28c8c",
-                color: "white",
-                borderColor: "#9b1b1b",
-              },
-            }}
+          <Button onClick={handleConfirmDelete}
+          sx={{
+            backgroundColor: '#df0404',
+            color: '#ffffff',
+            width: 80,
+            borderColor: '#f8dddd',
+            borderWidth: 2,
+            '&:hover': {
+              backgroundColor: '#f28c8c',
+              color: 'white',
+              borderColor: '#9b1b1b',
+            },
+          }}
           >
             Delete
           </Button>
@@ -386,8 +351,8 @@ const CardGrid: React.FC = () => {
 
       {selectedClub && (
         <EditClubDialog
-          open={dialogOpen} // Use dialogOpen here
-          onClose={handleCloseEditDialog}
+          open={dialogOpen}
+          onClose={handleCloseDialog}
           club={selectedClub}
           onSave={handleSaveChanges}
         />
