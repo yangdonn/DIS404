@@ -1,9 +1,8 @@
 import {
-  IconAperture,
-  IconCopy,
   IconLayoutDashboard,
   IconClipboardList,
   IconCalendarTime,
+  IconListNumbers,
   IconEdit,
   IconLogin
 } from "@tabler/icons-react";
@@ -34,6 +33,12 @@ const Menuitems = [
     title: "Club information",
     icon: IconEdit,
     href: "/ClubDetail", 
+  },
+  {
+    id: uniqueId(),
+    title: "Attendance",
+    icon: IconListNumbers,
+    href: "/Attendance", 
   },
   {
     id: uniqueId(),
