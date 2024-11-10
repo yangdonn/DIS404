@@ -19,7 +19,13 @@ export const authOptions = {
                 try{
                     await connectToDB();
                     const pool = getPool();
-                    const user = await pool.query(` SELECT * FROM login WHERE lusername = $1`, [credentials.username]);
+                    const user = await pool.query(`
+                        SELECT login.*, membership.cid 
+                        FROM login
+                        JOIN membership ON login.mid = membership.stdid
+                        WHERE login.lusername = $1
+                    `, [credentials.username]);
+                    
                     if(!user || user.rowCount === 0){
                         throw new Error('No user found');
                     }
@@ -35,7 +41,8 @@ export const authOptions = {
                         id: userRow.loginid,
                         mid: userRow.mid,
                         name: userRow.lusername,
-                        status: userRow.status
+                        status: userRow.status,
+                        cid : userRow.cid
                     };
 
                 } catch(error){
@@ -53,12 +60,14 @@ export const authOptions = {
                 token.mid = user.mid;
                 token.name = user.name;
                 token.status = user.status;
+                token.cid = user.cid
             }
             if (trigger === 'signout'){
                  token.id = null;
                  token.mid = null;
                  token.name = null;
                  token.status = null;
+                 token.cid = null;
             }
             return token;
         },
@@ -67,11 +76,13 @@ export const authOptions = {
             session.user.mid = token.mid;
             session.user.name = token.name;
             session.user.status = token.status;
+            session.user.cid = token.cid;
             if (!token.id) {
                 session.user.id = null;
                 session.user.mid = null;
                 session.user.name = null;
                 session.user.status = null;
+                session.user.cid = null;
             }
     
             return session;
