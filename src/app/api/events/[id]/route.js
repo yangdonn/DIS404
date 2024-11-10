@@ -39,6 +39,7 @@ export const POST = async (req, { params}) => {
     }
 }
 
+
 export const DELETE = async (req, { params }) => {
     const id = params.id
     try {

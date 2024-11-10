@@ -6,9 +6,14 @@ export const GET = async (req, { params }) => {
     await connectToDB();
     const pool = getPool();
 
-    const result = await pool.query("SELECT * FROM club WHERE clubid = $1", [
-      id,
-    ]);
+    const result = await pool.query(
+      `SELECT club.*, clubAdvisor.aname
+      FROM club
+      JOIN clubAdvisor ON club.clubadvisor = clubAdvisor.AID
+      WHERE club.clubid = $1`, 
+      [id]
+    );
+
 
     if (result.rows.length === 0) {
       pool.end();
