@@ -19,8 +19,6 @@ const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState<null | HTMLElement>(null);
   
   const handleClick2 = (event: React.MouseEvent<HTMLElement>) => {
-  const [anchorEl2, setAnchorEl2] = useState(null);
-  const handleClick2 = (event: any) => {
     setAnchorEl2(event.currentTarget);
   };
 

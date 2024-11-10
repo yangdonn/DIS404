@@ -8,7 +8,7 @@ import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCa
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
-const MemberStats = () => {
+const MemberStats = () => {   
   interface MemberCount {
     stdgender: "M" | "F" | "Total";
     count: string;
