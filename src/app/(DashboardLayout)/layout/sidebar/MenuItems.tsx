@@ -20,9 +20,9 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Membership",
-    icon: IconClipboardList, 
-    href: "/Membership", 
-  }, 
+    icon: IconClipboardList,
+    href: "/Membership",
+  },
   {
     id: uniqueId(),
     title: "Events",
@@ -38,8 +38,8 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Login",
-    icon: IconLogin, 
-    href: "authentication/login", 
+    icon: IconLogin,
+    href: "authentication/login",
   },
 ];
 

@@ -1,40 +1,116 @@
-/* App.css */
+/* .app-container {
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  padding: 20px;
+}
 
-.input-container {
+.calendar-container {
+  width: 100%;
+  max-width: 800px; 
   margin-bottom: 20px;
 }
 
-.input-title {
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: column;
+.event-list {
+  width: 100%;
+  max-width: 800px; 
+  background-color: #f9f9f9;
+  border-top: 1px solid #ddd;
+  padding: 20px;
 }
 
-.input-title label {
-  font-weight: bold;
-  margin-bottom: 5px;
+.event-list h3 {
+  margin-bottom: 15px;
 }
 
-.input-time {
-  display: flex;
-  flex-direction: column;
-}
-
-.input-time label {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
 .event-container {
-  font-family: Arial, sans-serif; /* Use a consistent font */
   padding: 5px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd;
 }
 
-.event-location {
-  font-size: 14px; /* Adjust font size for location */
-  color: gray; /* Change color for distinction */
+.event-title {
+  font-weight: bold;
 }
 
 .event-time {
-  font-size: 12px; /* Adjust font size for time */
-  color: lightgray; /* Change color for distinction */
+  font-size: 12px;
+  color: gray;
+} */
+
+.event-table-container {
+  padding: 20px;
+}
+
+.event-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.event-table th,
+.event-table td {
+  padding: 12px 15px;
+}
+
+.event-table th {
+  background-color: #4caf50; /* Header color */
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.event-table tr {
+  background-color: #fff; /* Row background */
+  transition: background-color 0.3s;
+}
+
+.event-table tr:nth-child(even) {
+  background-color: #f8f8f8; /* Alternate row color */
+}
+
+.event-table tr:hover {
+  background-color: #f1f1f1; /* Hover effect */
+}
+
+.event-table td {
+  color: #333;
+  font-size: 14px;
+  text-align: center;
+}
+
+.event-table .action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button.delete {
+  background-color: #e57373;
+  color: white;
+}
+
+.button.delete:hover {
+  background-color: #f44336;
+}
+
+.button.edit {
+  background-color: #64b5f6;
+  color: white;
+}
+
+.button.edit:hover {
+  background-color: #2196f3;
 }

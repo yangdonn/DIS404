@@ -1,6 +1,6 @@
 import { useMediaQuery, Box, Drawer, Typography } from "@mui/material";
 import SidebarItems from "./SidebarItems";
-import { Sidebar, Logo } from 'react-mui-sidebar';
+import { Sidebar, Logo } from "react-mui-sidebar";
 
 interface ItemType {
   isMobileSidebarOpen: boolean;
@@ -19,16 +19,15 @@ const MSidebar = ({
 
   // Custom CSS for short scrollbar
   const scrollbarStyles = {
-    '&::-webkit-scrollbar': {
-      width: '7px',
-
+    "&::-webkit-scrollbar": {
+      width: "7px",
     },
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: '#eff2f7',
-      borderRadius: '15px',
+    "&::-webkit-scrollbar-thumb": {
+      backgroundColor: "#eff2f7",
+      borderRadius: "15px",
     },
   };
-  const imageSrc = "/images/logos/CST_logo.jpg"; 
+  const imageSrc = "/images/logos/CST_logo.jpg";
 
   const renderLogo = () => (
     <Box
@@ -44,9 +43,9 @@ const MSidebar = ({
         src={imageSrc}
         alt="Sidebar Logo"
         style={{
-          width: '100px', // Adjust width as needed
-          height: '100px', // Adjust height as needed
-          borderRadius: '50%', // Optional: Make the image circular
+          width: "100px", // Adjust width as needed
+          height: "100px", // Adjust height as needed
+          borderRadius: "50%", // Optional: Make the image circular
         }}
       />
       {/* Text below the image */}
@@ -55,7 +54,6 @@ const MSidebar = ({
       </Typography>
     </Box>
   );
-
 
   if (lgUp) {
     return (
@@ -88,7 +86,7 @@ const MSidebar = ({
             }}
           >
             <Sidebar
-              width={'270px'}
+              width={"270px"}
               collapsewidth="80px"
               open={isSidebarOpen}
               themeColor="#5d87ff"
@@ -106,7 +104,7 @@ const MSidebar = ({
                 {/* ------------------------------------------- */}
                 <SidebarItems />
               </Box>
-            </Sidebar >
+            </Sidebar>
           </Box>
         </Drawer>
       </Box>
@@ -131,7 +129,7 @@ const MSidebar = ({
       {/* ------------------------------------------- */}
       <Box px={2}>
         <Sidebar
-          width={'270px'}
+          width={"270px"}
           collapsewidth="80px"
           isCollapse={false}
           mode="light"
@@ -154,14 +152,8 @@ const MSidebar = ({
       {/* ------------------------------------------- */}
       {/* Sidebar For Mobile */}
       {/* ------------------------------------------- */}
-
     </Drawer>
   );
 };
 
 export default MSidebar;
-
-
-
-
-

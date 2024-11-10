@@ -14,6 +14,19 @@ interface AddClubDialogProps {
   }) => void;
 }
 
+const AddClubDialog: React.FC<AddClubDialogProps> = ({
+  open,
+  onClose,
+  onSave,
+}) => {
+  const [formValues, setFormValues] = React.useState({
+    clubName: "",
+    advisorName: "",
+    coordinatorName: "",
+    clubDescription: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
 const AddClubDialog: React.FC<AddClubDialogProps> = ({ open, onClose, onSave }) => {
   const [formValues, setFormValues] = useState({
     clubName: '',

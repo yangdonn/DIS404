@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import { useState } from "react";
-import { signIn } from 'next-auth/react';
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-
+import { useSession } from "next-auth/react";
 
 import { Grid, Box, Card, Stack, Typography } from "@mui/material";
 // components
@@ -13,14 +13,16 @@ import Logo from "@/app/(DashboardLayout)/layout/shared/logo/Logo";
 import AuthLogin from "../auth/AuthLogin";
 
 const Login2 = () => {
-  console.log('Inside login page')
+  console.log("Inside login page");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const router = useRouter();
+  const { data: session } = useSession();
+  console.log("Debugging Session", session);
 
-  const handleSubmit = async(e: React.FormEvent) => {
-    console.log('Handle Submitetd called');
+  const handleSubmit = async (e: React.FormEvent) => {
+    console.log("Handle Submitetd called");
     e.preventDefault();
 
     if (!username || !password) {
@@ -28,27 +30,26 @@ const Login2 = () => {
       alert("Please enter both username and password."); // Optional: Display an alert
       return; // Exit if fields are empty
     }
-    const result = await signIn('credentials',{
+    const result = await signIn("credentials", {
       redirect: false,
       username,
-      password
+      password,
     });
 
-    console.log('Login username', username)
-    if(result?.error){
+    console.log("Login username", username);
+    if (result?.error) {
       console.error(result.error);
       alert("Invalid username or password."); // Optional: Display
-    } else{
-      console.log('login sucesfull');
-
-      router.push('/');
     }
-  }
+    if (session?.user?.status === "Admin") router.push("/Admin");
+    else {
+      router.push("/");
+    }
+  };
 
-  const imageSrc = "/images/logos/CST_logo.jpg"; 
+  const imageSrc = "/images/logos/CST_logo.jpg";
   return (
     <PageContainer title="Login" description="this is Login page">
-        
       <Box
         sx={{
           position: "relative",
@@ -86,39 +87,36 @@ const Login2 = () => {
             >
               <div
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center', // Horizontally center the items
-                  justifyContent: 'center', // Vertically center the items
-                  height: '100%', // Ensure the container takes the full height of the parent
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center", // Horizontally center the items
+                  justifyContent: "center", // Vertically center the items
+                  height: "100%", // Ensure the container takes the full height of the parent
                 }}
               >
                 <img
                   src={imageSrc}
                   alt="Sidebar Logo"
                   style={{
-                    width: '100px', // Adjust width as needed
-                    height: '100px', // Adjust height as needed
-                    borderRadius: '50%', // Optional: Make the image circular
-                    justifyContent: 'center',
+                    width: "100px", // Adjust width as needed
+                    height: "100px", // Adjust height as needed
+                    borderRadius: "50%", // Optional: Make the image circular
+                    justifyContent: "center",
                   }}
                 />
                 {/* Text below the image */}
-                <Typography variant="h6" mt={2} >
+                <Typography variant="h6" mt={2}>
                   Club Management System
                 </Typography>
-
               </div>
-              
-                      
-              <form onSubmit ={handleSubmit}>
+
+              <form onSubmit={handleSubmit}>
                 <AuthLogin
                   username={username}
                   password={password}
                   setUsername={setUsername}
                   setPassword={setPassword}
                   handleSubmit={handleSubmit}
-            
                   subtitle={
                     <Stack
                       direction="row"
@@ -131,7 +129,7 @@ const Login2 = () => {
                         variant="h6"
                         fontWeight="500"
                       >
-                        Don't have an account?
+                        Create New account?
                       </Typography>
                       <Typography
                         component={Link}
