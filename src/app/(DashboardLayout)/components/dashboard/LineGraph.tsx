@@ -48,6 +48,7 @@ export default function SimpleLineChart() {
                     tickSize: 10, // Adjust tick size for more space
                 }]}
                 yAxis={[{ label: 'No of events' }]}
+                
             />
         </Box>
     </DashboardCard>

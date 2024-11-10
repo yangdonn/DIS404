@@ -4,7 +4,7 @@ import {
   IconLayoutDashboard,
   IconClipboardList,
   IconCalendarTime,
-  IconChartBar,
+  IconEdit,
   IconLogin
 } from "@tabler/icons-react";
 
@@ -29,12 +29,12 @@ const Menuitems = [
     icon: IconCalendarTime,
     href: "/Events", 
   }, 
-  // {
-  //   id: uniqueId(),
-  //   title: "Statistics",
-  //   icon: IconChartBar, 
-  //   href: "/Statistics", 
-  // }, 
+  {
+    id: uniqueId(),
+    title: "Club information",
+    icon: IconEdit,
+    href: "/ClubDetail", 
+  },
   {
     id: uniqueId(),
     title: "Login",

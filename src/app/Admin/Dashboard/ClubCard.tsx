@@ -1,16 +1,6 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Grid, Card, CardActions, CardContent, TextField, Box, Typography, Snackbar, Alert } from '@mui/material';
+
 import AddClubDialog from './AddClub';
 
 // Define the types for the OutlinedCard component props
@@ -225,6 +215,7 @@ const CardGrid: React.FC = () => {
 
     const [selectedClub, setSelectedClub] = React.useState<{ clubName: string; advisorName: string; coordinatorName: string; clubDescription?: string; } | null>(null);
     const [dialogOpen, setDialogOpen] = React.useState(false);
+    const [snackbarMessage, setSnackbarMessage] = React.useState<string | null>(null);
     const [addDialogOpen, setAddDialogOpen] = React.useState(false);
     const [clubToDelete, setClubToDelete] = React.useState<string | null>(null);
   
@@ -241,13 +232,15 @@ const CardGrid: React.FC = () => {
     const handleDeleteClick = (clubName: string) => {
       setClubToDelete(clubName);
       setDialogOpen(true);
+      
     };
   
     const handleConfirmDelete = () => {
       if (clubToDelete) {
         setCardsData((prevData) => prevData.filter((card) => card.clubName !== clubToDelete));
         setClubToDelete(null);
-        setDialogOpen(false);
+        setDialogOpen(false); 
+        setSnackbarMessage('Club deleted successfully');
       }
     };
 
@@ -267,6 +260,12 @@ const CardGrid: React.FC = () => {
           card.clubName === selectedClub?.clubName ? { ...card, ...updatedClub } : card
         )
       );
+      setSelectedClub(null);
+      setSnackbarMessage('Club updated successfully');
+      setDialogOpen(false);
+    };
+    const handleCloseSnackbar = () => {
+      setSnackbarMessage(null);
     };
 
   return (
@@ -349,6 +348,7 @@ const CardGrid: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
       {selectedClub && (
         <EditClubDialog
           open={dialogOpen}
@@ -357,6 +357,17 @@ const CardGrid: React.FC = () => {
           onSave={handleSaveChanges}
         />
       )}
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={!!snackbarMessage}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       <AddClubDialog
         open={addDialogOpen}
         onClose={() => setAddDialogOpen(false)}

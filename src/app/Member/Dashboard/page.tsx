@@ -1,16 +1,18 @@
-'use client'
-import { useState } from 'react';
-import { Grid, Box } from '@mui/material';
-import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
-// components
-import MemberStats from '@/app/(DashboardLayout)/components/dashboard/Memberstats';
-import UpcomingEvents from '@/app/(DashboardLayout)/components/dashboard/UpcomingEvents';
-import RecentEvents from '@/app/(DashboardLayout)/components/dashboard/RecentEvents';
-import Calendar from './components/dashboard/Calendar';
-import LineGraph from './components/dashboard/LineGraph';
+// app/Member/Dashboard/page.tsx (Dashboard Page)
+'use client';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { Box, Grid, Typography } from '@mui/material';
+import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer'; // Adjust path if needed
+import MemberStats from '../Clubpages/Memberstats'; // Adjust path if needed
+import UpcomingEvents from '../Clubpages/UpcomingEvents'; // Adjust path if needed
+import RecentEvents from '../Clubpages/RecentEvents'; // Adjust path if needed
+import Calendar from '../Clubpages/Calendar'; // Adjust path if needed
 
 const Dashboard = () => {
-  // State to manage selected event date
+  const searchParams = useSearchParams();
+  const clubId = searchParams.get('clubId'); // Extract clubId from the query parameters
+
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [events, setEvents] = useState([
     { date: '2024-07-27', title: 'Welcome session' },
@@ -23,27 +25,28 @@ const Dashboard = () => {
     { date: '2024-11-28', title: 'TechTalk' },
   ]);
 
-  // Filter recent events (dates before today)
   const recentEvents = events.filter(event => new Date(event.date) < new Date());
-
-  // Filter upcoming events (dates today or in the future)
   const upcomingEvents = events.filter(event => new Date(event.date) >= new Date());
 
-  // Define the type of 'date' as a string
   const handleEventClick = (date: string) => {
     setSelectedDate(date);
     console.log(`Selected date: ${date}`);
   };
 
+  useEffect(() => {
+    if (clubId) {
+      console.log(`Dashboard loaded for Club ID: ${clubId}`);
+    }
+  }, [clubId]);
+
   return (
-    <PageContainer title="Dashboard">
+    <PageContainer title={`Dashboard for Club ${clubId}`}>
       <Box>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <MemberStats /> {/* MemberStats Component */}
+            <MemberStats />
           </Grid>
         </Grid>
-
         <Grid>
           <Box>
             <Grid container spacing={2}>
@@ -58,13 +61,6 @@ const Dashboard = () => {
               </Grid>
             </Grid>
           </Box>
-        </Grid>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Box sx={{ mt: 3 }}> 
-              <LineGraph />
-            </Box>
-          </Grid>
         </Grid>
       </Box>
     </PageContainer>
