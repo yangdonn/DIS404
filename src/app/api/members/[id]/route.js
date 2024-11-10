@@ -29,10 +29,10 @@ export const PUT = async (req, { params }) => {
         await connectToDB();
         const pool = getPool();
         const id = params.id
-        const { stdID, stdName, stdgender, pid, stdemail} = await req.json();
+        const { stdID, stdName,stdyear,stdgender, stdemail, pid} = await req.json();
         
-        const result = await pool.query(`INSERT INTO MEMBERSHIP (stdId, stdname,stdgender, stdyear, pid, stdemail, cid), VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-            [stdID, stdName, stdgender, pid, stdemail, id]);
+        const result = await pool.query(`INSERT INTO MEMBERSHIP (stdId, stdname, stdyear,stdgender, stdemail,pid, cid) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+            [stdID, stdName, stdyear,stdgender, stdemail, pid, id]);
         return new Response('Member added sucessfully', { status: 201})
     } catch (error) {
         console.log('Error entering Member', { status: 500})
@@ -46,7 +46,7 @@ export const DELETE = async (req,{ params}) => {
     try {
         await connectToDB();
         const pool = getPool();
-        const result = pool.query(`DELETE from Membership WHERE MID = $1`, [id])
+        const result = pool.query(`DELETE from Membership WHERE stdid = $1`, [id])
         if(result.rowCount === 0){
             return new Response('No such member exists', { status: 404 })
         }
