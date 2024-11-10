@@ -7,6 +7,7 @@ import * as XLSX from "xlsx";
 import { MemberData } from "./interfaces/MemberData";
 import { Member } from "./interfaces/Member";
 import Modal from "./Modal";
+import { FiEdit2, FiTrash2, FiSearch, FiPlus } from "react-icons/fi";
 
 const MembersTable = () => {
   const { data: session } = useSession();
@@ -18,7 +19,6 @@ const MembersTable = () => {
   const [sortCriteria, setSortCriteria] = useState("");
   const [jsonData, setJsonData] = useState([]);
 
-  // new adde hder
   const [currentPage, setCurrentPage] = useState(1);
 
   const membersPerPage = 10; // Number of members per page
@@ -374,7 +374,7 @@ const MembersTable = () => {
             id="fileInput"
           />
           {/* Custom button that triggers the file input */}
-          <label htmlFor="fileInput" style={styles.importButton}>
+          <label htmlFor="fileInput" style={styles.addButton}>
             Import
           </label>
           {/* Display the imported data (optional)
@@ -425,19 +425,23 @@ const MembersTable = () => {
                 <td style={styles.td}>
                   <div style={styles.buttonContainer}>
                     {/* Pass the correct member to openEditModal */}
-                    <button
+                    <FiEdit2
                       onClick={() => openEditModal(member)}
-                      style={styles.editButton}
-                    >
-                      Edit
-                    </button>
-                    {/* Connect delete button with delete handler */}
-                    <button
+                      style={{
+                        fontSize: "1rem",
+                        color: "#779aff",
+                        fill: "#94c2e5",
+                      }}
+                    ></FiEdit2>
+
+                    <FiTrash2
                       onClick={() => handleDeleteMember(member.studentnum)}
-                      style={styles.deleteButton}
-                    >
-                      Delete
-                    </button>
+                      style={{
+                        fontSize: "1rem",
+                        color: "red",
+                        fill: "#fcd9d6",
+                      }}
+                    ></FiTrash2>
                   </div>
                 </td>
               </tr>

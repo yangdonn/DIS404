@@ -4,7 +4,8 @@ import {
   IconCalendarTime,
   IconListNumbers,
   IconEdit,
-  IconLogin
+  IconWallet,
+  IconLogin,
 } from "@tabler/icons-react";
 
 import { uniqueId } from "lodash";
@@ -26,13 +27,19 @@ const Menuitems = [
     id: uniqueId(),
     title: "Events",
     icon: IconCalendarTime,
-    href: "/Events", 
-  }, 
+    href: "/Events",
+  },
   {
     id: uniqueId(),
     title: "Club information",
     icon: IconEdit,
-    href: "/ClubDetail", 
+    href: "/ClubDetail",
+  },
+  {
+    id: uniqueId(),
+    title: "Fund",
+    icon: IconWallet,
+    href: "/Finance",
   },
   {
     id: uniqueId(),

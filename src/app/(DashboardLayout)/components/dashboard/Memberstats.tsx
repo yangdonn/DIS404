@@ -138,8 +138,8 @@ const MemberStats = () => {
         {/* Female Members Card */}
         <DashboardCard
           sx={{
-            height: "250px", // Ensure all cards have the same height
-            width: "300px", // Fixed width to ensure consistency
+            height: "250px",
+            width: "300px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -163,7 +163,7 @@ const MemberStats = () => {
             </Box>
             <Box ml={2}>
               <Typography variant="subtitle1" color="GrayText">
-                Female
+                Female Counts
               </Typography>
               <Typography variant="h5" fontWeight="bold" fontSize={30}>
                 {counts.Female}
