@@ -5,6 +5,7 @@ import HowToRegIcon from '@mui/icons-material/HowToReg';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
 
+
 const ClubStats = () => {
   return (
     <Box sx={{ mb: 3 }}>
@@ -27,7 +28,7 @@ const ClubStats = () => {
                         </Box>
                         <Box ml={2}>
                             <Typography variant="subtitle1" color="GrayText">Total Clubs</Typography> {/* Smaller font size */}
-                            <Typography variant="h5" fontWeight="bold">100</Typography> {/* Adjusted heading size */}
+                            <Typography variant="h5" fontWeight="bold">17</Typography> {/* Adjusted heading size */}
                         </Box>
                     </Box>
 

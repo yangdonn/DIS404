@@ -1,6 +1,7 @@
 "use client";
-import React, { ChangeEvent, useState } from "react";
-import {Box, Avatar, Paper, Button, TextField, Typography, Snackbar, Alert} from "@mui/material";
+import React, { ChangeEvent, useState, useEffect } from "react";
+import { Box, Avatar, Paper, Button, TextField, Typography, Snackbar, Alert } from "@mui/material";
+import { useSession } from "next-auth/react";
 
 // Define a type for the club data fields
 type ClubData = {
@@ -8,6 +9,7 @@ type ClubData = {
   advisorName: string;
   coordinatorName: string;
   clubDescription?: string;
+  clubImage?: string | null;
 };
 
 // Define a type for the edit mode state
@@ -19,6 +21,7 @@ type EditMode = {
 };
 
 const ClubDetails = () => {
+  const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState<EditMode>({
     clubName: false,
     advisorName: false,
@@ -27,14 +30,43 @@ const ClubDetails = () => {
   });
 
   const [clubData, setClubData] = useState<ClubData>({
-    clubName: "Tech Club",
-    advisorName: "Dr. John Doe",
-    coordinatorName: "Alice Smith",
-    clubDescription: "A club dedicated to technology and innovation.",
+    clubName: "",
+    advisorName: "",
+    coordinatorName: "",
+    clubDescription: "",
+    clubImage: "",
   });
-  const [clubPicture, setClubPicture] = useState<string>("/images/profile/user-1.jpg");
+
+  const [clubPicture, setClubPicture] = useState<string>("");
 
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
+  const fetchClubData = async () => {
+    try {
+      const response = await fetch(`/api/clubs/${session?.user?.cid}`);
+      if (response.ok) {
+        const data = await response.json();
+        setClubData({
+          clubName: data.clubname,
+          advisorName: data.aname,
+          coordinatorName: data.clubcoordinator,
+          clubDescription: data.clubdescription,
+          clubImage: data.clubimage || "",
+        });
+        setClubPicture(data.clubimage || "/images/profile/user-1.jpg");
+      } else {
+        setSnackbarMessage("Failed to fetch club data");
+      }
+    } catch (error) {
+      setSnackbarMessage("Error fetching club data");
+    }
+  };
+
+
+  // Fetch club data from the API endpoint
+  useEffect(() => {
+ 
+    fetchClubData();
+  }, []);
 
   const handleEditToggle = (field: keyof ClubData) => {
     setIsEditing((prev) => ({ ...prev, [field]: !prev[field] }));
@@ -44,15 +76,44 @@ const ClubDetails = () => {
     setClubData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSave = () => {
-    setIsEditing({
-      clubName: false,
-      advisorName: false,
-      coordinatorName: false,
-      clubDescription: false,
-    });
-    setSnackbarMessage('Club details updated successfully');
+  const handleSave = async () => {
+    try {
+      // Prepare the data to send in the PUT request
+      const updatedClubData = {
+        clubName: clubData.clubName,
+        advisorName: clubData.advisorName,
+        coordinatorName: clubData.coordinatorName,
+        clubDescription: clubData.clubDescription,
+      };
+  
+      // Send a PUT request to update the club details in the database
+      const response = await fetch(`/api/clubs/${session?.user?.cid}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedClubData),
+      });
+  
+      // Check if the response was successful
+      if (response.ok) {
+        setSnackbarMessage("Club details updated successfully");
+        setIsEditing({
+          clubName: false,
+          advisorName: false,
+          coordinatorName: false,
+          clubDescription: false,
+        });
+        fetchClubData();
+      } else {
+        const errorData = await response.json();
+        setSnackbarMessage(errorData.message || "Failed to update club details");
+      }
+    } catch (error) {
+      setSnackbarMessage("Error updating club details");
+    }
   };
+  
 
   const handleCloseSnackbar = () => {
     setSnackbarMessage(null);
@@ -67,21 +128,13 @@ const ClubDetails = () => {
   };
 
   const handleCancel = () => {
-    // Reset to initial club data
-    setClubData({
-      clubName: "Tech Club",
-      advisorName: "Dr. John Doe",
-      coordinatorName: "Alice Smith",
-      clubDescription: "A club dedicated to technology and innovation.",
-    });
-
     setIsEditing({
       clubName: false,
       advisorName: false,
       coordinatorName: false,
       clubDescription: false,
     });
-    setSnackbarMessage('Club details set back to initial');
+    setSnackbarMessage("Club details reset to initial values");
   };
 
   return (
@@ -97,8 +150,8 @@ const ClubDetails = () => {
           <Typography variant="h6" component="div" style={{ fontWeight: "bold" }}>
             Edit club information
           </Typography>
-          <Box sx={{ mt: 4}}>
-            <Box sx={{display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center" }}>
+          <Box sx={{ mt: 4 }}>
+            <Box sx={{ display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center" }}>
               <Avatar
                 src={clubPicture}
                 alt="Profile Picture"
@@ -117,7 +170,7 @@ const ClubDetails = () => {
                 </Button>
               </label>
             </Box>
-            
+
             <TextField
               fullWidth
               value={clubData.clubName}
@@ -257,10 +310,11 @@ const ClubDetails = () => {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: "100%" }}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbarMessage === "Club details updated successfully" ? "success" : "error"} sx={{ width: "100%" }}>
           {snackbarMessage}
         </Alert>
       </Snackbar>
+
     </Box>
   );
 };
