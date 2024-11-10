@@ -667,10 +667,5 @@ const styles = {
     flexDirection: "column",
     justifyContent: "space-between",
   },
-  // eventImage: {
-  //   maxWidth: "100%",
-  //   maxHeight: "100px", // Limit the image height
-  //   objectFit: "cover", // Ensure the image fits nicely within the height limit
-  //   borderRadius: "4px",
-  // },
+  
 };

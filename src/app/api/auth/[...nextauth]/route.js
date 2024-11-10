@@ -48,6 +48,7 @@ export const authOptions = {
             mid: userRow.mid,
             name: userRow.lusername,
             status: userRow.status,
+            cid: userRow.cid,
           };
         } catch (error) {
           console.log("Error authorizing  user: ", error);
@@ -64,12 +65,14 @@ export const authOptions = {
         token.mid = user.mid;
         token.name = user.name;
         token.status = user.status;
+        token.cid = user.cid;
       }
       if (trigger === "signout") {
         token.id = null;
         token.mid = null;
         token.name = null;
         token.status = null;
+        token.cid = null;
       }
       return token;
     },
@@ -78,11 +81,13 @@ export const authOptions = {
       session.user.mid = token.mid;
       session.user.name = token.name;
       session.user.status = token.status;
+      session.user.cid = token.cid;
       if (!token.id) {
         session.user.id = null;
         session.user.mid = null;
         session.user.name = null;
         session.user.status = null;
+        session.user.cid = null;
       }
 
       return session;
