@@ -30,3 +30,27 @@ export const POST = async (req) => {
     return new Response("Error creating clubAdvisor", { status: 500 });
   }
 };
+
+// import { connectToDB, getPool } from "../../../utils/database";
+
+// export const GET = async (req) => {
+//   try {
+//     await connectToDB();
+//     const pool = getPool();
+
+//     const query = `
+//       SELECT *
+//       FROM clubadvisor
+//       JOIN club ON clubadvisor.cid = club.clubid
+//       JOIN clubadvisor.cid= membership.
+//     `;
+
+//     const { rows } = await pool.query(query);
+//     return new Response(JSON.stringify(rows), { status: 200 });
+//   } catch (error) {
+//     console.error("Error retrieving clubAdvisor and club data:", error);
+//     return new Response("Error retrieving clubAdvisor and club data", {
+//       status: 500,
+//     });
+//   }
+// };

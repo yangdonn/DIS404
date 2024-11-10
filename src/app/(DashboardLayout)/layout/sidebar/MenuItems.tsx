@@ -5,7 +5,7 @@ import {
   IconClipboardList,
   IconCalendarTime,
   IconChartBar,
-  IconLogin
+  IconLogin,
 } from "@tabler/icons-react";
 
 import { uniqueId } from "lodash";
@@ -20,26 +20,26 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Membership",
-    icon: IconClipboardList, 
-    href: "/Membership", 
-  }, 
+    icon: IconClipboardList,
+    href: "/Membership",
+  },
   {
     id: uniqueId(),
     title: "Events",
     icon: IconCalendarTime,
-    href: "/Events", 
-  }, 
+    href: "/Events",
+  },
   // {
   //   id: uniqueId(),
   //   title: "Statistics",
-  //   icon: IconChartBar, 
-  //   href: "/Statistics", 
-  // }, 
+  //   icon: IconChartBar,
+  //   href: "/Statistics",
+  // },
   {
     id: uniqueId(),
     title: "Login",
-    icon: IconLogin, 
-    href: "authentication/login", 
+    icon: IconLogin,
+    href: "authentication/login",
   },
 ];
 
