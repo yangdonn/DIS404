@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { Snackbar, Alert } from "@mui/material";
+import { Snackbar, Alert, Box } from "@mui/material";
 import { styles } from "./style";
 import * as XLSX from "xlsx";
 import { MemberData } from "./interfaces/MemberData";
@@ -10,6 +10,8 @@ import { Member } from "./interfaces/Member";
 import Modal from "./Modal";
 import { FiEdit2, FiTrash2, FiSearch, FiPlus } from "react-icons/fi";
 import ConfirmationModal from "./ConfirmationModal";
+import LinearWithValueLabel from "../loading";
+import { set } from "lodash";
 
 const MembersTable = () => {
   const { data: session } = useSession();
@@ -20,6 +22,7 @@ const MembersTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortCriteria, setSortCriteria] = useState("");
   const [jsonData, setJsonData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [isConfirmationModalVisible, setConfirmationModalVisible] =
     useState(false);
@@ -129,6 +132,8 @@ const MembersTable = () => {
       setMembers(formattedMembers);
     } catch (error) {
       console.error("Error fetching members:", error);
+    } finally{
+      setIsLoading(false);
     }
   };
   useEffect(() => {
@@ -142,6 +147,15 @@ const MembersTable = () => {
       submitData();
     }
   }, [jsonData]);
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <LinearWithValueLabel />
+      </Box>
+    );
+    
+  }
 
   const submitData = async () => {
     for (const member of jsonData) {

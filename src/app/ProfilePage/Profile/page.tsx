@@ -19,6 +19,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { useSession } from "next-auth/react";
 
+
 type ProfileData = {
   name: string;
   email: string;
@@ -113,6 +114,7 @@ const ProfilePage = () => {
       password: false,
     });
   };
+
 
   const handleChangePassword = () => {
     if (newPassword !== confirmNewPassword) {

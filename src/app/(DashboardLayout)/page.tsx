@@ -10,6 +10,7 @@ import Calendar from "./components/dashboard/Calendar";
 import LineGraph from "./components/dashboard/LineGraph";
 import PieChart from "./components/dashboard/piechart";
 import { useSession } from "next-auth/react";
+import LinearWithValueLabel from "./loading";
 
 interface Event {
   date: string;
@@ -20,10 +21,11 @@ const Dashboard = () => {
   const { data: session } = useSession();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchEvents = async (userId: string) => {
     try {
-      const response = await fetch(`/api/getEvents/${userId}`);
+      const response = await fetch(`/api/events`);
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -37,14 +39,26 @@ const Dashboard = () => {
       setEvents(structuredEvents);
     } catch (error) {
       console.error("Error fetching events:", error);
+    } finally{
+      setIsLoading(false);
     }
   };
+
 
   useEffect(() => {
     if (session) {
       fetchEvents(session.user.mid);
     }
   }, [session]);
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <LinearWithValueLabel />
+      </Box>
+    );
+    
+  }
 
   const recentEvents = events.filter(
     (event) => new Date(event.date) < new Date()

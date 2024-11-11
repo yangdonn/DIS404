@@ -2,6 +2,7 @@
 import React, { ChangeEvent, useState, useEffect } from "react";
 import { Box, Avatar, Paper, Button, TextField, Typography, Snackbar, Alert } from "@mui/material";
 import { useSession } from "next-auth/react";
+import LinearWithValueLabel from "../loading";
 
 // Define a type for the club data fields
 type ClubData = {
@@ -38,6 +39,7 @@ const ClubDetails = () => {
   });
 
   const [clubPicture, setClubPicture] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
   const fetchClubData = async () => {
@@ -58,6 +60,8 @@ const ClubDetails = () => {
       }
     } catch (error) {
       setSnackbarMessage("Error fetching club data");
+    } finally{
+      setIsLoading(false);
     }
   };
 
@@ -67,6 +71,14 @@ const ClubDetails = () => {
  
     fetchClubData();
   }, []);
+  if (isLoading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <LinearWithValueLabel />
+      </Box>
+    );
+    
+  }
 
   const handleEditToggle = (field: keyof ClubData) => {
     setIsEditing((prev) => ({ ...prev, [field]: !prev[field] }));

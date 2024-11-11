@@ -67,8 +67,8 @@ const RecordAttendance: React.FC<RecordAttendanceProps> = ({ eventId, attendance
     const isSearchMatch = 
       student.studentId.toLowerCase().includes(search.toLowerCase()) ||
       student.name.toLowerCase().includes(search.toLowerCase()) ||
-      student.department.toLowerCase().includes(search.toLowerCase()) ||
-      student.year.toLowerCase().includes(search.toLowerCase());
+      student.department?.toLowerCase().includes(search.toLowerCase()) 
+
 
     const isDepartmentMatch = selectedDepartment === "All" || student.department === selectedDepartment;
 

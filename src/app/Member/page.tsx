@@ -3,6 +3,8 @@ import { useRouter } from 'next/navigation';
 import { Box, Card, CardActionArea, CardContent, CardMedia, Grid, Typography, Button, CardActions } from '@mui/material';
 import {useState, useEffect} from 'react';
 import { useSession } from 'next-auth/react';
+import LinearWithValueLabel from "../(DashboardLayout)/loading";
+
 
 // /images/logos/ACM_logo.jpg
 
@@ -53,7 +55,12 @@ const ClubsPage = () => {
     router.push(`/Member/Dashboard?clubId=${clubId}`);
   };
   if (isLoading) {
-    return <Typography>Loading...</Typography>;
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <LinearWithValueLabel />
+      </Box>
+    );
+    
   }
 
   return (
