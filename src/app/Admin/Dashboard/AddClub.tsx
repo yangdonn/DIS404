@@ -45,7 +45,6 @@ const AddClubDialog: React.FC<AddClubDialogProps> = ({ open, onClose, onSave }) 
   };
 
   const handleCloseSnackbar = () => {
-    console.log("Snackbar closed"); // Debugging
     setShowSuccessMessage(false);
   };
 
@@ -72,129 +71,76 @@ const AddClubDialog: React.FC<AddClubDialogProps> = ({ open, onClose, onSave }) 
           <Box
             component="form"
             sx={{
-              '& .MuiTextField-root': { mb: 2, width: '100%' },
+              '& .MuiTextField-root': { mt: 2,mb: 2, width: '100%' },
             }}
             noValidate
             autoComplete="off"
           >
-            <Box sx={{ mt: 2, mb: -2 }}>
-              <TextField
-                name="clubName"
-                label="Club Name"
-                variant="outlined"
-                value={formValues.clubName}
-                onChange={handleChange}
-                InputProps={{
-                  style: { backgroundColor: '#fff', borderRadius: '5px' },
-                }}
-              />
-              <TextField
-                name="advisorName"
-                label="Advisor Name"
-                variant="outlined"
-                value={formValues.advisorName}
-                onChange={handleChange}
-                InputProps={{
-                  style: { backgroundColor: '#fff', borderRadius: '5px' },
-                }}
-              />
-              <TextField
-                name="coordinatorNumber"
-                label="Coordinator StudentNumber"
-                variant="outlined"
-                value={formValues.coordinatorNumber}
-                onChange={handleChange}
-                InputProps={{
-                  style: { backgroundColor: '#fff', borderRadius: '5px' },
-                }}
-              />
-              <TextField
-                name="coordinatorName"
-                label="Coordinator Name"
-                variant="outlined"
-                value={formValues.coordinatorName}
-                onChange={handleChange}
-                InputProps={{
-                  style: { backgroundColor: '#fff', borderRadius: '5px' },
-                }}
-              />
-              <TextField
-                name="clubDescription"
-                label="Club Description"
-                variant="outlined"
-                multiline
-                rows={3}
-                value={formValues.clubDescription}
-                onChange={handleChange}
-                InputProps={{
-                  style: { backgroundColor: '#fff', borderRadius: '5px' },
-                }}
-              />
-              <TextField
-                name="username"
-                label="Username"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={formValues.username}
-                onChange={handleChange}
-                required
-              />
-              <TextField
-                name="password"
-                label="Password"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                type="password"
-                value={formValues.password}
-                onChange={handleChange}
-                required
-              />
-              <TextField
-                name="confirmPassword"
-                label="Confirm Password"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                type="password"
-                value={formValues.confirmPassword}
-                onChange={handleChange}
-                required
-              />
-            </Box>
+            <TextField
+              name="clubName"
+              label="Club Name"
+              variant="outlined"
+              value={formValues.clubName}
+              onChange={handleChange}
+            />
+            <TextField
+              name="advisorName"
+              label="Advisor Name"
+              variant="outlined"
+              value={formValues.advisorName}
+              onChange={handleChange}
+            />
+            <TextField
+              name="coordinatorName"
+              label="Coordinator Name"
+              variant="outlined"
+              value={formValues.coordinatorName}
+              onChange={handleChange}
+            />
+            <TextField
+              name="coordinatorNumber"
+              label="Coordinator Number"
+              variant="outlined"
+              value={formValues.coordinatorNumber}
+              onChange={handleChange}
+            />
+            <TextField
+              name="clubDescription"
+              label="Club Description"
+              variant="outlined"
+              value={formValues.clubDescription}
+              onChange={handleChange}
+              multiline
+              rows={4}
+            />
+            <TextField
+              name="username"
+              label="Username"
+              variant="outlined"
+              value={formValues.username}
+              onChange={handleChange}
+            />
+            <TextField
+              name="password"
+              label="Password"
+              type="password"
+              variant="outlined"
+              value={formValues.password}
+              onChange={handleChange}
+            />
+            <TextField
+              name="confirmPassword"
+              label="Confirm Password"
+              type="password"
+              variant="outlined"
+              value={formValues.confirmPassword}
+              onChange={handleChange}
+            />
           </Box>
         </DialogContent>
-        <DialogActions style={{ justifyContent: 'center', padding: '20px' }}>
-          <Button
-            onClick={onClose}
-            variant="contained"
-            style={{
-              backgroundColor: '#d3d3d3',
-              color: '#333',
-              borderRadius: '5px',
-              padding: '10px 20px',
-              width: 80,
-              textTransform: 'none',
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSave}
-            variant="contained"
-            style={{
-              backgroundColor: '#000',
-              color: '#fff',
-              borderRadius: '5px',
-              padding: '10px 20px',
-              width: 80,
-              marginLeft: '10px',
-              textTransform: 'none',
-            }}
-          >
-            Add
-          </Button>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={handleSave}>Save</Button>
         </DialogActions>
       </Dialog>
 

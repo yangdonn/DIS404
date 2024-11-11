@@ -18,6 +18,9 @@ import {
 } from "@mui/material";
 
 import AddClubDialog from "./AddClub";
+import ClubStats from '@/app/Admin/Dashboard/ClubStats';
+import ClubCard from '@/app/Admin/Dashboard/ClubCard';
+// import AddClubDialog from './Dashboard/AddClub';
 
 // Define the types for the OutlinedCard component props
 interface OutlinedCardProps {
@@ -232,6 +235,11 @@ const EditClubDialog: React.FC<{
 
 // Main component for displaying multiple cards
 const CardGrid: React.FC = () => {
+  const [clubsData, setClubsData] = useState({
+    total: 17,
+    active: 17,
+    inactive: 0,
+  });
 
 
   const [cardsData, setCardsData] = React.useState([]);
@@ -276,12 +284,23 @@ const CardGrid: React.FC = () => {
   const [addDialogOpen, setAddDialogOpen] = React.useState(false);
   const [clubToDelete, setClubToDelete] = React.useState<string | null>(null);
 
+
   const handleAddClub = (newClub: {
     clubName: string;
     advisorName: string;
     coordinatorName: string;
   }) => {
+    // Add new club to cardsData
     setCardsData((prevData) => [...prevData, newClub]);
+  
+    // Update clubsData to reflect the new club added
+    setClubsData((prevState) => ({
+      total: prevState.total + 1,  // Increment total clubs count
+      active: prevState.active + 1, // Increment active clubs count (assuming the new club is active)
+      inactive: prevState.inactive, // Inactive clubs count remains the same for now
+    }));
+  
+    // Close the add club dialog
     setAddDialogOpen(false);
   };
 
@@ -308,6 +327,13 @@ const CardGrid: React.FC = () => {
       setClubToDelete(null);
       setDialogOpen(false);
       setSnackbarMessage("Club deleted successfully");
+
+      // Update club counts after deletion
+      setClubsData((prevState) => ({
+        total: prevState.total - 1,  // Decrease total clubs count
+        active: prevState.active - 1, // Decrease active clubs count
+        inactive: prevState.inactive, // Inactive clubs count remains the same for now
+      }));
     }
   };
 
@@ -341,15 +367,21 @@ const CardGrid: React.FC = () => {
   const handleCloseSnackbar = () => {
     setSnackbarMessage(null);
   };
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
 
   return (
     <>
+    {/* Pass the clubsData to ClubStats */}
+    <ClubStats total={clubsData.total} active={clubsData.active} inactive={clubsData.inactive} />
       <Box sx={{ display: "flex", justifyContent: "end", mb: 2 }}>
         <Button
           variant="contained"
           onClick={() => setAddDialogOpen(true)} // Open Add dialog
+          // onClick={handleDialogOpen}
           style={{
-            backgroundColor: "#00ac4f",
+            backgroundColor: "#0f6aba",
             color: "#fff",
             borderRadius: "5px",
             padding: "10px 20px",
@@ -360,6 +392,11 @@ const CardGrid: React.FC = () => {
           Add New Club
         </Button>
       </Box>
+
+
+          
+
+
       <Grid container spacing={2}>
         {cardsData.map((card, index) => (
           <Grid item xs={12} sm={6} md={4} key={index}>
