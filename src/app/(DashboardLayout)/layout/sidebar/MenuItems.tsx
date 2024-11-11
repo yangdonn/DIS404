@@ -5,7 +5,8 @@ import {
   IconListNumbers,
   IconEdit,
   IconMessage,
-  IconLogin
+  IconLogin,
+  IconWallet
 } from "@tabler/icons-react";
 
 import { uniqueId } from "lodash";
