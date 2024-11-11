@@ -11,8 +11,7 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
-import { format } from "path";
-import { set } from "lodash";
+import { Alert, Snackbar } from "@mui/material";
 
 const Calendar = () => {
   const {data: session} = useSession();
@@ -32,6 +31,10 @@ const Calendar = () => {
     image: null,
   });
   const [editingEvent, setEditingEvent] = useState(null);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState(null);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentDate(new Date()), 1000);
@@ -66,7 +69,7 @@ const Calendar = () => {
 
   const daysInMonth = new Date(displayedYear, displayedMonth + 1, 0).getDate();
   const firstDayOfMonth = new Date(displayedYear, displayedMonth, 1).getDay();
-
+  
   const renderCalendarDays = () => {
     const days = [];
     for (let i = 0; i < firstDayOfMonth; i++)
@@ -158,7 +161,7 @@ const Calendar = () => {
 
   const handleAddEvent = async (e) => {
     e.preventDefault();
-  
+    
     // If editing an existing event
     if (editingEvent) {
       try {
@@ -169,6 +172,7 @@ const Calendar = () => {
           )
         );
         setEditingEvent(null); // Reset after edit
+        setSnackbarMessage("Event updated successfully")
         setShowAddEvent(false); 
   
         const neventData = {
@@ -192,7 +196,7 @@ const Calendar = () => {
   
         if (response.ok) {
           console.log('Event updated successfully');
-          setShowAddEvent(false); 
+          // setShowAddEvent(false); 
         } else {
           console.error('Failed to update event');
         }
@@ -230,19 +234,31 @@ const Calendar = () => {
         });
   
         if (response.ok) {
+          // const savedEvent = await response.json();
+          // setShowAddEvent(false);
+          // setEvents([...events, savedEvent]); // Update local events with the saved event
+          // setSnackbarMessage("Event added succesfully");
+          // // Close the Add Event modal after saving
+
           const savedEvent = await response.json();
-          setEvents([...events, savedEvent]); // Update local events with the saved event
-  
-          // Close the Add Event modal after saving
-          setShowAddEvent(false);
+          setEvents([...events, savedEvent]); // Update local state with new event
+          setSnackbarMessage("Event added successfully"); // Snackbar message
+          setShowAddEvent(false); // Close modal
+          
         } else {
           console.error('Failed to add event');
-          alert('Failed to add Event');
+          setSnackbarMessage("Failed to add event"); // Snackbar message for failure
+          setShowAddEvent(false);
         }
       } catch (error) {
         console.error('Error adding event:', error);
+        // setSnackbarMessage("Error occurred while saving event"); // Snackbar message for error
+        setShowAddEvent(false);
       }
+      setSnackbarMessage("Event added successfully"); 
+      setShowAddEvent(false);
     }
+    
   
     // Reset the new event form after both adding and editing
     setNewEvent({
@@ -254,6 +270,7 @@ const Calendar = () => {
       description: '',
       image: null,
     });
+    setShowAddEvent(false);
   };
   
   const handlePreviousMonth = () => {
@@ -285,28 +302,49 @@ const Calendar = () => {
       description: event.description,
       image: event.image,
     });
+    
     setShowAddEvent(true); // Open the modal for editing
   };
 
-  const handleDeleteEvent = async (eventId) => {
+  const handleDeleteEvent = (eventId) => {
+    // Open delete confirmation modal
+    setEventToDelete(eventId);
+    setShowDeleteConfirmation(true);
+  };
+  
+  const confirmDeleteEvent = async () => {
     try {
-      const response = await fetch(`/api/events/${eventId}`, {
+      // Make the DELETE request to the server
+      const response = await fetch(`/api/events/${eventToDelete}`, {
         method: 'DELETE',
       });
   
       if (response.ok) {
-        // If the delete was successful, filter out the deleted event from the local state
-        const updatedEvents = events.filter((event) => event.id !== eventId);
-        setEvents(updatedEvents);
-        console.log('Event deleted successfully');
+        // Successfully deleted event, now remove it from state
+        setEvents(events.filter((event) => event.id !== eventToDelete));
+        setSnackbarMessage("Event deleted successfully");
       } else {
-        console.error('Failed to delete event');
+        console.error("Failed to delete event");
+        setSnackbarMessage("Failed to delete event");
       }
     } catch (error) {
-      console.error('Error deleting event:', error);
+      console.error("Error deleting event:", error);
+      setSnackbarMessage("Error deleting event");
     }
+    
+    // Close confirmation modal after attempting to delete
+    setShowDeleteConfirmation(false);
   };
   
+  const handleCancelDelete = () => {
+    // Close the confirmation modal without deleting
+    setShowDeleteConfirmation(false);
+    setEventToDelete(null);
+  };
+  
+  const handleCloseSnackbar = () => {
+    setSnackbarMessage(""); // Close the Snackbar
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -341,6 +379,8 @@ const Calendar = () => {
         ))}
         {renderCalendarDays()}
       </div>
+
+      
       <div style={styles.upcomingContainer}>
         <h2 style={styles.subtitle}>Upcoming Events</h2>
         <button style={styles.addButton} onClick={() => setShowAddEvent(true)}>
@@ -421,6 +461,69 @@ const Calendar = () => {
           </div>
         </div>
       )}
+
+        {showDeleteConfirmation && (
+          <div style={styles.modal}>
+            <div
+              style={{
+                ...styles.modalContent,
+                width: "300px",
+                padding: "20px",
+                textAlign: "center",
+              }}
+            >
+              <h3>Are you sure you want to delete this event?</h3>
+              <div
+                style={{
+                  ...styles.modalActions,
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "10px",
+                }}
+              >
+                <button
+                  onClick={handleCancelDelete}
+                  style={{
+                    backgroundColor: "#d9d9d9",
+                    color: "#000000",
+                    width: "80px",
+                    borderWidth: "2px",
+                    borderColor: "#007f5f",
+                    padding: "8px 16px",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseOver={(e) => (e.target.style.backgroundColor = "#C8C1C1")}
+                  onMouseOut={(e) => (e.target.style.backgroundColor = "#d9d9d9")}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDeleteEvent}
+                  style={{
+                    backgroundColor: "#df0404",
+                    color: "#ffffff",
+                    width: "80px",
+                    borderColor: "#f8dddd",
+                    borderWidth: "2px",
+                    padding: "8px 16px",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseOver={(e) => (e.target.style.backgroundColor = "#f28c8c")}
+                  onMouseOut={(e) => (e.target.style.backgroundColor = "#df0404")}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+
+      
 
       {showAddEvent && (
         <div style={styles.modal}>
@@ -534,8 +637,23 @@ const Calendar = () => {
           </div>
         </div>
       )}
+      <Snackbar
+        open={!!snackbarMessage}
+        autoHideDuration={1000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
 
 export default Calendar;
+
