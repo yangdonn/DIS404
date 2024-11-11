@@ -4,8 +4,8 @@ import {
   IconCalendarTime,
   IconListNumbers,
   IconEdit,
-  IconWallet,
-  IconLogin,
+  IconMessage,
+  IconLogin
 } from "@tabler/icons-react";
 
 import { uniqueId } from "lodash";
@@ -46,6 +46,12 @@ const Menuitems = [
     title: "Attendance",
     icon: IconListNumbers,
     href: "/Attendance", 
+  },
+  {
+    id: uniqueId(),
+    title: "Feedbacks",
+    icon: IconMessage,
+    href: "/Feedback", 
   },
   {
     id: uniqueId(),

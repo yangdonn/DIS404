@@ -76,13 +76,12 @@ const FeedbackDialog: React.FC<{
   open: boolean;
   onClose: () => void;
   event: { eventName: string; venue: string; dresscode: string; date: Date };
-  onSave: (feedback: { comments: string; rating: number }) => void;
+  onSave: (feedback: { comments: string}) => void;
 }> = ({ open, onClose, event, onSave }) => {
   const [comments, setComments] = React.useState('');
-  const [rating, setRating] = React.useState<number | ''>('');
 
   const handleSave = () => {
-    onSave({ comments, rating: Number(rating) });
+    onSave({ comments });
     onClose();
   };
 
@@ -181,7 +180,7 @@ const CardGrid: React.FC = () => {
     setFeedbackDialogOpen(true);
   };
 
-  const handleSaveFeedback = (feedback: { comments: string; rating: number }) => {
+  const handleSaveFeedback = (feedback: { comments: string}) => {
     console.log('Feedback saved:', feedback);
     setSnackbarMessage('Feedback submitted successfully!'); // Set success message
     handleCloseDialog();
