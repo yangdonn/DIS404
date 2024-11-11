@@ -55,7 +55,6 @@ const Attendance: React.FC = () => {
               "&:hover": {
                 transform: "scale(1.02)", // Slightly larger scale for hover effect
                 boxShadow: "0 4px 6px rgba(0, 0, 0, 0.15)", // Slightly more pronounced shadow on hover
-                backgroundColor: "#f4f4f4", // Slight color change on hover
               },
               borderRadius: 2,
               border: "1px solid #ddd", // Light border for all cards

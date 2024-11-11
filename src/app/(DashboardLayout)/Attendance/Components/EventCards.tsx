@@ -32,20 +32,19 @@ const initialData = [
 
 const EventCards: React.FC<EventCardsProps> = ({ mode }) => {
   const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
-  const [attendanceData, setAttendanceData] = useState(initialData);
+  const [attendanceData, setAttendanceData] = useState<{ [key: number]: typeof initialData }>({});
 
-  // Format date to DD/MM/YYYY
   const formatDate = (date: Date) => {
     return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
   };
 
+  const handleSetAttendanceData = (eventId: number, data: typeof initialData) => {
+    setAttendanceData((prevData) => ({ ...prevData, [eventId]: data }));
+  };
+
   return (
     <Box>
-      <Typography variant="h6" sx={{ mb: 2 }}>
-        Select an Event
-      </Typography>
-
-      {/* Event cards with horizontal scroll */}
+      <Typography variant="h6" sx={{ mb: 2 }}>Select an Event</Typography>
       <Box sx={{ display: "flex", overflowX: "auto", gap: 2, pb: 3 }}>
         {events.map((event) => (
           <Card
@@ -54,48 +53,37 @@ const EventCards: React.FC<EventCardsProps> = ({ mode }) => {
             sx={{
               minWidth: 250,
               cursor: "pointer",
-              backgroundColor: selectedEvent === event.id ? "#f5f5f5" : "#fff", // Soft background color for selected card
-              boxShadow: selectedEvent === event.id ? "0 4px 8px rgba(0, 0, 0, 0.1)" : "0 2px 4px rgba(0, 0, 0, 0.1)", // Slightly more prominent shadow for selected card
-              transition: "transform 0.2s ease, box-shadow 0.2s ease", // Transition for both hover and selection state
+              backgroundColor: selectedEvent === event.id ? "#f5f5f5" : "#fff",
+              boxShadow: selectedEvent === event.id ? "0 4px 8px rgba(0, 0, 0, 0.1)" : "0 2px 4px rgba(0, 0, 0, 0.1)",
+              transition: "transform 0.2s ease, box-shadow 0.2s ease",
               borderRadius: 2,
-              border: "1px solid #ddd", // Light border for all cards
-              "&:hover": {
-                transform: "scale(1.02)", // Slightly smaller scale for subtle interaction
-                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.15)", // More subtle shadow on hover
-              },
+              border: "1px solid #ddd",
+              "&:hover": { transform: "scale(1.02)", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.15)" },
             }}
           >
             <CardContent sx={{ padding: 2 }}>
-              <Typography variant="h6" sx={{ fontWeight: "bold", textAlign: "center" }}>
-                {event.name}
-              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: "bold", textAlign: "center" }}>{event.name}</Typography>
               <Grid container spacing={1} sx={{ mt: 1 }}>
-                <Grid item xs={12}>
-                  <Typography variant="body2" sx={{ color: "#8d94b3" }}>
-                    <strong>Venue:</strong> {event.venue}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="body2" sx={{ color: "#8d94b3" }}>
-                    <strong>Dress code:</strong> {event.dresscode}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="body2" sx={{ color: "#8d94b3" }}>
-                    <strong>Date:</strong> {formatDate(event.date)}
-                  </Typography>
-                </Grid>
+                <Grid item xs={12}><Typography variant="body2" sx={{ color: "#8d94b3" }}><strong>Venue:</strong> {event.venue}</Typography></Grid>
+                <Grid item xs={12}><Typography variant="body2" sx={{ color: "#8d94b3" }}><strong>Dress code:</strong> {event.dresscode}</Typography></Grid>
+                <Grid item xs={12}><Typography variant="body2" sx={{ color: "#8d94b3" }}><strong>Date:</strong> {formatDate(event.date)}</Typography></Grid>
               </Grid>
             </CardContent>
           </Card>
         ))}
       </Box>
 
-      {/* Show RecordAttendance or ViewAttendance based on the selected event and mode */}
       {selectedEvent && (
         mode === "record" ? 
-          <RecordAttendance eventId={selectedEvent} attendanceData={attendanceData} setAttendanceData={setAttendanceData} /> : 
-          <ViewAttendance eventId={selectedEvent} attendanceData={attendanceData} />
+          <RecordAttendance 
+            eventId={selectedEvent} 
+            attendanceData={attendanceData[selectedEvent] || initialData} 
+            setAttendanceData={(data) => handleSetAttendanceData(selectedEvent, data)} 
+          /> : 
+          <ViewAttendance 
+            eventId={selectedEvent} 
+            attendanceData={attendanceData[selectedEvent] || initialData} 
+          />
       )}
     </Box>
   );

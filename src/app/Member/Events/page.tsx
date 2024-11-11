@@ -207,11 +207,6 @@ const CardGrid: React.FC = () => {
     setFeedbackDialogOpen(true);
   };
 
-<<<<<<< Updated upstream
-  const handleSaveFeedback = (feedback: { comments: string}) => {
-    console.log('Feedback saved:', feedback);
-    setSnackbarMessage('Feedback submitted successfully!'); // Set success message
-=======
   const handleSaveFeedback = async (feedback: { comments: string; rating: number }) => {
     if (!selectedEvent || !session) return;
   
@@ -245,7 +240,6 @@ const CardGrid: React.FC = () => {
       setSnackbarMessage('Error submitting feedback');
     }
   
->>>>>>> Stashed changes
     handleCloseDialog();
   };
   

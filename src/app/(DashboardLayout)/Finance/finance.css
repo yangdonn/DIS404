@@ -1,4 +1,4 @@
-/* General Styles */
+/* General Styles
 
 /* Add this CSS to your Finance dashboard styles (e.g., finance.css) */
 
@@ -187,7 +187,7 @@
 }
 
 /* Search and Add Button */
-/* .search-and-add {
+.search-and-add {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -208,7 +208,7 @@
 .search-icon {
   color: #a0aec0;
   margin-right: 0.5rem;
-} */
+}
 
 .addbutton {
   background-color: #114eff;
@@ -334,4 +334,4 @@ button + button {
 
 .search-btn:active {
   background-color: #1e7e34;
-}
+} 
