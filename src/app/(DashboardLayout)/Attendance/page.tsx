@@ -32,6 +32,7 @@ const Attendance: React.FC = () => {
               borderRadius: 2,
               border: "1px solid #ddd", // Light border for all cards
             }}
+
           >
             <CardActionArea>
               <CardContent>

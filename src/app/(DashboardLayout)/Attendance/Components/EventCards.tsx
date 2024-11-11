@@ -11,16 +11,6 @@ type EventCardsProps = {
 };
 
 
-
-// const initialData = [
-//   { id: 1, studentId: "S001", name: "Alice", department: "IT", year: "2nd", status: false },
-//   { id: 2, studentId: "S002", name: "Bob", department: "CS", year: "3rd", status: false },
-//   { id: 3, studentId: "S003", name: "Charlie", department: "IT", year: "1st", status: false },
-//   { id: 4, studentId: "S004", name: "Roy", department: "IT", year: "2nd", status: false },
-//   { id: 5, studentId: "S005", name: "Alien", department: "CS", year: "3rd", status: false },
-//   { id: 6, studentId: "S006", name: "Exo", department: "IT", year: "1st", status: false },
-// ];
-
 const EventCards: React.FC<EventCardsProps> = ({ mode }) => {
   const { data: session } = useSession();
   const [events, setEvents] = useState([]);
@@ -51,6 +41,7 @@ const EventCards: React.FC<EventCardsProps> = ({ mode }) => {
         const [firstName, lastName] = member.stdname.split(" "); // Split the name into first and last
 
         return {
+          id: member.stdid,
           name: member.stdname,
           studentId: member.stdid,
           department: programMap[member.pid] || "Unknown",
@@ -95,7 +86,7 @@ const EventCards: React.FC<EventCardsProps> = ({ mode }) => {
   };
   
 
-  const handleSetAttendanceData = (eventId: number, data: typeof initialData) => {
+  const handleSetAttendanceData = (eventId: string, data: typeof initialData) => {
     setAttendanceData((prevData) => ({ ...prevData, [eventId]: data }));
   };
 
