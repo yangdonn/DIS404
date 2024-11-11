@@ -81,7 +81,7 @@ const AuthLogin = ({ title, subtitle, subtext,username, password, setUsername, s
         <FormGroup>
           <FormControlLabel
             control={<Checkbox defaultChecked />}
-            label="Remeber this Device"
+            label="Remember this Device"
           />
         </FormGroup>
         <Typography
