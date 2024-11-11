@@ -1,7 +1,9 @@
 'use client';
 import * as React from 'react';
 import { Grid, Card, CardActionArea, CardMedia, CardContent, Typography, Box, CardActions, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar, Alert } from '@mui/material';
-
+import { useEffect } from 'react';
+import { eventNames } from 'process';
+import { useSession } from 'next-auth/react';
 // Define the types for the OutlinedCard component props
 interface OutlinedCardProps {
   eventName: string;
@@ -136,30 +138,75 @@ const FeedbackViewDialog: React.FC<{
 
 // Main component for displaying multiple cards
 const CardGrid: React.FC = () => {
-  const [cardsData, setCardsData] = React.useState([
-    { eventName: 'Welcome Gathering', venue: 'Teamwork hall', dresscode: 'Formal', date: new Date('2024-07-27'), imageUrl: '/images/logos/event.jpg' },
-    { eventName: 'First meeting', venue: 'LH - 01', dresscode: 'Casual', date: new Date('2024-08-02'), imageUrl: '/images/logos/event.jpg' },
-    { eventName: 'Tech Talk Contest', venue: 'Convention hall', dresscode: 'Formal', date: new Date('2024-07-17'), imageUrl: '/images/logos/event.jpg' },
-    { eventName: 'Seminar 1', venue: 'Convention hall', dresscode: 'Formal', date: new Date('2024-08-10'), imageUrl: '/images/logos/event.jpg' },
-    { eventName: 'ICPC', venue: 'OOS and Software lab', dresscode: 'Formal', date: new Date('2024-11-01'), imageUrl: '/images/logos/event.jpg' },
-    { eventName: 'ITS', venue: 'Innotech hall', dresscode: 'Casual', date: new Date('2024-07-27'), imageUrl: '/images/logos/event.jpg' },
-  ]);
+  const { data: session } = useSession();
+  const [cardsData, setCardsData] = React.useState([]);
+  useEffect(() => {
+    const fetchEvents = async () => {
+      if (!session) return; // Wait until session is available
+      try {
+        const response = await fetch(`/api/events/${session.user.cid}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
+        const data = await response.json();
+        const eventArray = Array.isArray(data) ? data : [data];
+
+        // Transform the data from the API to match the format expected by OutlinedCard
+        const transformedEvents = eventArray.map((event) => ({
+          eventID: event.eid,
+          eventName: event.ename,
+          venue: event.evenue,
+          dresscode: event.edresscode,
+          date: new Date(event.edate),
+          imageUrl: event.imageurl || '/images/logos/event.jpg', // Use default image if none provided
+        }));
+
+        setCardsData(transformedEvents);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    };
+
+    fetchEvents();
+  }, [session]);
 
   const [selectedEvent, setSelectedEvent] = React.useState<{ eventName: string; venue: string; dresscode: string; date: Date } | null>(null);
   const [feedbackDialogOpen, setFeedbackDialogOpen] = React.useState(false);
   const [feedbacks, setFeedbacks] = React.useState<Feedback[]>([]);
   const [snackbarMessage, setSnackbarMessage] = React.useState<string | null>(null);
 
-  const handleViewFeedback = (event: { eventName: string; venue: string; dresscode: string; date: Date }) => {
-    // Example feedback data; replace this with actual data fetching logic
-    const sampleFeedbacks: Feedback[] = [
-      { comments: 'Great event!', submittedAt: '2024-07-27T12:00:00Z' },
-      { comments: 'Very informative session.', submittedAt: '2024-07-27T13:00:00Z' },
-    ];
-    setFeedbacks(sampleFeedbacks);
-    setSelectedEvent(event);
-    setFeedbackDialogOpen(true);
+  const handleViewFeedback = async (event) => {
+    try {
+      // Fetch feedback data for the specific event
+      const response = await fetch(`/api/feedback/${event.eventID}`);
+      if (response.status === 404) {
+        const fallbackFeedback = [{ 
+          comments: `No feedback available for ${event.eventName}.`, 
+          submittedAt: '' 
+        }];
+        setFeedbacks(fallbackFeedback);
+        setSelectedEvent(event);
+        setFeedbackDialogOpen(true);
+        return; // Exit the function early
+      }
+      // Parse the JSON response to get the feedback data
+      const feedbackData = await response.json();
+  
+      // Check if feedback data is empty
+      const eventFeedbacks = feedbackData.length > 0 ? feedbackData.map(feedback => ({
+        comments: feedback.feedcomments,
+        submittedAt: new Date().toISOString(), // Replace with actual date if available in your response
+      })) : [{ comments: 'No feedback available for this event.', submittedAt: '' }];
+  
+      setFeedbacks(eventFeedbacks);
+      setSelectedEvent(event);
+      setFeedbackDialogOpen(true);
+    } catch (error) {
+      console.error('Error fetching feedback:', error);
+      setSnackbarMessage('Failed to load feedback for this event');
+    }
   };
+  
 
   const handleCloseDialog = () => {
     setFeedbackDialogOpen(false);
