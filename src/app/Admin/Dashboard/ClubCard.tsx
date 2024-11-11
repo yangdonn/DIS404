@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -231,68 +232,36 @@ const EditClubDialog: React.FC<{
 
 // Main component for displaying multiple cards
 const CardGrid: React.FC = () => {
-  const [cardsData, setCardsData] = React.useState([
-    {
-      clubName: "RUB ACM Chapter",
-      advisorName: "John Doe",
-      coordinatorName: "Jane Smith",
-    },
-    {
-      clubName: "Tech Club",
-      advisorName: "Alice Johnson",
-      coordinatorName: "Bob Brown",
-    },
-    {
-      clubName: "Art Society",
-      advisorName: "Charlie Green",
-      coordinatorName: "Daisy White",
-    },
-    {
-      clubName: "Science Club",
-      advisorName: "Emily Black",
-      coordinatorName: "Frank Blue",
-    },
-    {
-      clubName: "Literature Circle",
-      advisorName: "Grace Pink",
-      coordinatorName: "Hank Gray",
-    },
-    {
-      clubName: "Music Group",
-      advisorName: "Ivy Orange",
-      coordinatorName: "Jack Yellow",
-    },
-    {
-      clubName: "RUB ACM Chapter",
-      advisorName: "John Doe",
-      coordinatorName: "Jane Smith",
-    },
-    {
-      clubName: "Tech Club",
-      advisorName: "Alice Johnson",
-      coordinatorName: "Bob Brown",
-    },
-    {
-      clubName: "Art Society",
-      advisorName: "Charlie Green",
-      coordinatorName: "Daisy White",
-    },
-    {
-      clubName: "Science Club",
-      advisorName: "Emily Black",
-      coordinatorName: "Frank Blue",
-    },
-    {
-      clubName: "Literature Circle",
-      advisorName: "Grace Pink",
-      coordinatorName: "Hank Gray",
-    },
-    {
-      clubName: "Music Group",
-      advisorName: "Ivy Orange",
-      coordinatorName: "Jack Yellow",
-    },
-  ]);
+
+
+  const [cardsData, setCardsData] = React.useState([]);
+
+
+
+  const fetchClubs = async () => {
+    const response = await fetch("/api/clubs");
+    const data = await response.json();
+    const newData = Array.isArray(data)
+      ? data.map((club) => ({
+          clubName: club.club_name,
+          advisorName: club.advisor_name,
+          coordinatorName: club.member_name,
+          clubDescription: club.club_description,
+        }))
+      : [
+          {
+            clubName: data.club_name,
+            advisorName: data.advisor_name,
+            coordinatorName: data.member_name,
+            clubDescription: data.club_description,
+          },
+        ];
+    setCardsData(newData);
+  };
+  useEffect(() => {
+    // Fetch initial data
+    fetchClubs();
+  }, []);
 
   const [selectedClub, setSelectedClub] = React.useState<{
     clubName: string;

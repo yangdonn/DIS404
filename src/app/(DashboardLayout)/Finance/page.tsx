@@ -6,26 +6,49 @@ import piechart from "../../(DashboardLayout)/components/dashboard/piechart";
 import "react-toastify/dist/ReactToastify.css";
 import { FiDollarSign, FiArrowUp, FiArrowDown } from "react-icons/fi";
 import "../Finance/finance.css";
+import { useSession } from "next-auth/react";
+
 
 const FinanceDashboard = () => {
-  const [records, setRecords] = useState([
-    {
-      id: 1,
-      date: "2024-01-15",
-      description: "Grocery Shopping",
-      amount: 100,
-      category: "Expenses",
-      notes: "Monthly groceries",
-    },
-    {
-      id: 2,
-      date: "2024-01-14",
-      description: "Salary Deposit",
-      amount: 5000,
-      category: "Income",
-      notes: "Monthly salary",
-    },
-  ]);
+  const { data: session } = useSession();
+  const [latestFundId, setLatestFundId] = useState('');
+  const [records, setRecords] = useState([]);
+  const fetchLatestFundId = async () => {
+    try {
+      const response = await fetch(`/api/getFundID/${session?.user.cid}`);
+      const { latestFundId } = await response.json();
+      const lastIdNumber = parseInt(latestFundId.slice(1), 10);
+      const newFundId = `F${String(lastIdNumber + 1).padStart(2, '0')}`;
+      setLatestFundId(newFundId);
+      console.log(newFundId)
+    } catch (error) {
+      console.error("Error fetching latest fund ID:", error);
+    }
+  };
+      const fetchFunds = async () => {
+      try {
+        const response = await fetch(`/api/funds/${session?.user.cid}`); // Update this to your actual API endpoint
+        const data = await response.json();
+        const formattedEvents = data.map((event) => ({
+          id: event.fundid.trim(),
+          date: new Date(event.edate).toISOString().slice(0, 10),
+          description: event.ename,
+          amount: event.amount ,
+          category: event.category,
+          notes: event.notes,
+        }));
+        setRecords(formattedEvents);
+        console.log(formattedEvents)
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+  useEffect(() => {
+
+    fetchFunds();
+    fetchLatestFundId();
+
+  }, []);
 
   const [formData, setFormData] = useState({
     date: "",
@@ -72,35 +95,64 @@ const FinanceDashboard = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    setIsLoading(true);
-    setTimeout(() => {
-      const newRecord = {
-        ...formData,
-        id: Date.now(),
-        amount: parseFloat(formData.amount),
-      }; // Parse amount as a number
-      if (isEditing) {
-        // Update the record if editing
-        setRecords(
-          records.map((record) =>
-            record.id === editId ? { ...newRecord, id: editId } : record
-          )
-        );
-        toast.success("Record updated successfully!");
-      } else {
-        // Add a new record
-        setRecords((prevRecords) => [...prevRecords, newRecord]);
-        toast.success("Record added successfully!");
-      }
-      resetForm();
-      setIsLoading(false);
-    }, 1000);
-  };
+    fetchLatestFundId();
+    const anewRecord = {
+      fundId: latestFundId,
+      ename: formData.description,
+      amount: parseFloat(formData.amount),
+      category: formData.category,
+      notes: formData.notes,
+      cid: session?.user.cid,
+    };
 
+    const newRecord = {
+      ...formData,
+      id: Date.now(),
+      amount: parseFloat(formData.amount),
+    };
+  
+    setIsLoading(true);
+  
+    if (isEditing) {
+      // Update the record if editing
+      setRecords(
+        records.map((record) =>
+          record.id === editId ? { ...newRecord, id: editId } : record
+        )
+      );
+      toast.success("Record updated successfully!");
+      setIsEditing(false);
+    } else {
+      // Add a new record
+      try {
+        const response = await fetch(`/api/funds/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(anewRecord),
+        });
+  
+        if (response.ok) {
+          // Update records locally if successful
+          const addedRecord = { ...newRecord, id: Date.now() };
+          setRecords((prevRecords) => [...prevRecords, addedRecord]);
+          toast.success("Record added successfully!");
+        } else {
+          toast.error("Error adding record");
+        }
+      } catch (error) {
+        console.error("Error adding record:", error);
+        toast.error("Error adding record");
+      }
+    }
+  
+    resetForm();
+    setIsLoading(false);
+  };
+  
   const resetForm = () => {
     setFormData({
       date: "",
@@ -122,16 +174,33 @@ const FinanceDashboard = () => {
     setShowModal(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (fundId) => {
     if (window.confirm("Are you sure you want to delete this record?")) {
       setIsLoading(true);
-      setTimeout(() => {
-        setRecords(records.filter((record) => record.id !== id));
-        toast.success("Record deleted successfully!");
+
+      console.log(`this is handle Delete fund id ${fundId}`)
+  
+      try {
+        const response = await fetch(`/api/funds/${fundId}`, {
+          method: "DELETE",
+        });
+  
+        if (response.ok) {
+          // Update local state by filtering out the deleted record
+          setRecords(records.filter((record) => record.id !== fundId));
+          toast.success("Record deleted successfully!");
+        } else {
+          toast.error("Error deleting record");
+        }
+      } catch (error) {
+        console.error("Error deleting record:", error);
+        toast.error("Error deleting record");
+      } finally {
         setIsLoading(false);
-      }, 500);
+      }
     }
   };
+  
 
   const handleSort = (key) => {
     const direction =

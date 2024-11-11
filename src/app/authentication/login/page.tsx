@@ -42,9 +42,14 @@ const Login2 = () => {
       alert("Invalid username or password."); // Optional: Display
     }
     if (session?.user?.status === "Admin") router.push("/Admin");
-    else {
+    else if (session?.user?.status === "coordinator"){
       router.push("/");
     }
+    else if (session?.user?.status === "member"){
+      router.push("/Member")
+    }
+    
+
   };
 
   const imageSrc = "/images/logos/CST_logo.jpg";
