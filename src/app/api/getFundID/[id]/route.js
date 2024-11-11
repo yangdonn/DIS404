@@ -9,7 +9,7 @@ export const GET = async (req, { params }) => {
 
         // Step 2: Find the latest event ID (eid) for the given cid
         const result = await pool.query(
-            `SELECT eid FROM events ORDER BY eid DESC LIMIT 1`,
+            `SELECT fundid FROM fund ORDER BY fundid DESC LIMIT 1`,
         );
 
         if (result.rowCount === 0) {
@@ -17,10 +17,10 @@ export const GET = async (req, { params }) => {
         }
 
         // Step 3: Extract the latest event id (eid)
-        const latestEventId = result.rows[0].eid;
+        const latestFundId = result.rows[0].fundid.trim();
 
         // Step 4: Return the latest event ID
-        return new Response(JSON.stringify({ latestEventId }), { status: 200 });
+        return new Response(JSON.stringify({ latestFundId }), { status: 200 });
     } catch (error) {
         console.error('Error fetching data:', error);
         return new Response(JSON.stringify({ message: 'Error getting the items' }), { status: 500 });

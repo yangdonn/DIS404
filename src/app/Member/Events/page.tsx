@@ -1,9 +1,11 @@
 'use client'
 import * as React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Grid, Card, CardActions, CardContent, TextField, Box, Typography, Snackbar, Alert, CardActionArea, CardMedia } from '@mui/material';
-
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 // Define the types for the OutlinedCard component props
 interface OutlinedCardProps {
+  eventID: string;
   eventName: string;
   venue: string;
   dresscode: string;
@@ -162,30 +164,91 @@ const FeedbackDialog: React.FC<{
 
 // Main component for displaying multiple cards
 const CardGrid: React.FC = () => {
-  const [cardsData, setCardsData] = React.useState([
-    { eventName: 'Welcome Gathering', venue: 'Teamwork hall', dresscode: 'Formal', date: new Date('2024-07-27'), imageUrl: '/images/logos/event.jpg' },
-    { eventName: 'First meeting', venue: 'LH - 01', dresscode: 'Casual', date: new Date('2024-08-02'), imageUrl: '/images/logos/event.jpg' },
-    { eventName: 'Tech Talk Contest', venue: 'Convention hall', dresscode: 'Formal', date: new Date('2024-07-17'), imageUrl: '/images/logos/event.jpg' },
-    { eventName: 'Seminar 1', venue: 'Convention hall', dresscode: 'Formal', date: new Date('2024-08-10'), imageUrl: '/images/logos/event.jpg' },
-    { eventName: 'ICPC', venue: 'OOS and Software lab', dresscode: 'Formal', date: new Date('2024-11-01'), imageUrl: '/images/logos/event.jpg' },
-    { eventName: 'ITS', venue: 'Innotech hall', dresscode: 'Casual', date: new Date('2024-07-27'), imageUrl: '/images/logos/event.jpg' },
-  ]);
+  const { data: session} = useSession();
+  const [cardsData, setCardsData] = useState([]);
 
-  const [selectedEvent, setSelectedEvent] = React.useState<{ eventName: string; venue: string; dresscode: string; date: Date } | null>(null);
-  const [feedbackDialogOpen, setFeedbackDialogOpen] = React.useState(false);
-  const [snackbarMessage, setSnackbarMessage] = React.useState<string | null>(null);
+  useEffect(() => {
+    const fetchEvents = async () => {
+      if (!session) return; // Wait until session is available
+      try {
+        const response = await fetch(`/api/events/${session.user.cid}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
+        const data = await response.json();
+        const eventArray = Array.isArray(data) ? data : [data];
 
-  const handleFeedback = (event: { eventName: string; venue: string; dresscode: string; date: Date }) => {
+        // Transform the data from the API to match the format expected by OutlinedCard
+        const transformedEvents = eventArray.map((event) => ({
+          eventID: event.eid,
+          eventName: event.ename,
+          venue: event.evenue,
+          dresscode: event.edresscode,
+          date: new Date(event.edate),
+          imageUrl: event.imageurl || '/images/logos/event.jpg', // Use default image if none provided
+        }));
+
+        setCardsData(transformedEvents);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    };
+
+    fetchEvents();
+  }, [session]);
+
+
+  const [selectedEvent, setSelectedEvent] = useState<{ eventID: string; eventName: string; venue: string; dresscode: string; date: Date } | null>(null);
+  const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
+
+  const handleFeedback = (event: { eventID: string; eventName: string; venue: string; dresscode: string; date: Date }) => {
     setSelectedEvent(event);
     setFeedbackDialogOpen(true);
   };
 
+<<<<<<< Updated upstream
   const handleSaveFeedback = (feedback: { comments: string}) => {
     console.log('Feedback saved:', feedback);
     setSnackbarMessage('Feedback submitted successfully!'); // Set success message
+=======
+  const handleSaveFeedback = async (feedback: { comments: string; rating: number }) => {
+    if (!selectedEvent || !session) return;
+  
+    try {
+      // Fetch the FeedID from the server
+      const feedIdResponse = await fetch(`/api/getFeedbackID/${session.user.cid}`);
+      const { latestFeedId } = await feedIdResponse.json();
+      const lastIdNumber = parseInt(latestFeedId.slice(1), 10);
+      const newFeedId = `B${String(lastIdNumber + 1).padStart(2, '0')}`;
+  
+      const feedbackData = {
+        feedId: newFeedId,
+        mId: session.user.mid,
+        feedComments: feedback.comments,
+      };
+      console.log(selectedEvent.eventID)
+      // Send the feedback to the API endpoint, using the selected event's eventID
+      const response = await fetch(`/api/feedback/${selectedEvent.eventID}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(feedbackData),
+      });
+  
+      if (response.ok) {
+        setSnackbarMessage('Feedback submitted successfully!');
+      } else {
+        setSnackbarMessage('Failed to submit feedback');
+      }
+    } catch (error) {
+      console.error('Error saving feedback:', error);
+      setSnackbarMessage('Error submitting feedback');
+    }
+  
+>>>>>>> Stashed changes
     handleCloseDialog();
-    // Handle feedback saving logic here (e.g., update state or send to backend)
   };
+  
 
   const handleCloseDialog = () => {
     setFeedbackDialogOpen(false);
@@ -198,15 +261,14 @@ const CardGrid: React.FC = () => {
   return (
     <Grid container spacing={2} sx={{ padding: 2 }}>
       {cardsData.map((card) => (
-        <Grid item xs={12} sm={6} md={4} key={card.eventName}>
+        <Grid item xs={12} sm={6} md={4} key={card.eventID}>
           <OutlinedCard
             eventName={card.eventName}
             venue={card.venue}
             dresscode={card.dresscode}
             date={card.date}
             imageUrl={card.imageUrl} // Pass imageUrl prop here
-            onFeedback={() => handleFeedback(card)}
-          />
+            onFeedback={() => handleFeedback(card)} />
         </Grid>
       ))}
 

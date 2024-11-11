@@ -19,6 +19,7 @@ const AddClubDialog: React.FC<AddClubDialogProps> = ({ open, onClose, onSave }) 
     clubName: '',
     advisorName: '',
     coordinatorName: '',
+    coordinatorNumber: '',
     clubDescription: '',
     username: '',
     password: '',
@@ -92,6 +93,16 @@ const AddClubDialog: React.FC<AddClubDialogProps> = ({ open, onClose, onSave }) 
                 label="Advisor Name"
                 variant="outlined"
                 value={formValues.advisorName}
+                onChange={handleChange}
+                InputProps={{
+                  style: { backgroundColor: '#fff', borderRadius: '5px' },
+                }}
+              />
+              <TextField
+                name="coordinatorNumber"
+                label="Coordinator StudentNumber"
+                variant="outlined"
+                value={formValues.coordinatorNumber}
                 onChange={handleChange}
                 InputProps={{
                   style: { backgroundColor: '#fff', borderRadius: '5px' },

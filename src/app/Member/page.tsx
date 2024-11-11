@@ -1,20 +1,60 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { Box, Card, CardActionArea, CardContent, CardMedia, Grid, Typography, Button, CardActions } from '@mui/material';
+import {useState, useEffect} from 'react';
+import { useSession } from 'next-auth/react';
 
-const clubs = [
-  { id: 1, title: 'Photography Club', description: 'Capture the world through lenses.', imageUrl: '/images/logos/ACM_logo.jpg' },
-  { id: 2, title: 'Coding Club', description: 'Learn and share programming knowledge.', imageUrl: '/images/logos/ACM_logo.jpg' },
-  { id: 3, title: 'Art Club', description: 'Express yourself through art.', imageUrl: '/images/logos/ACM_logo.jpg' },
-];
+// /images/logos/ACM_logo.jpg
+
+// const clubs = [
+//   { id: 1, title: 'Photography Club', description: 'Capture the world through lenses.', imageUrl: '/images/logos/ACM_logo.jpg' },
+//   { id: 2, title: 'Coding Club', description: 'Learn and share programming knowledge.', imageUrl: '/images/logos/ACM_logo.jpg' },
+//   { id: 3, title: 'Art Club', description: 'Express yourself through art.', imageUrl: '/images/logos/ACM_logo.jpg' },
+// ];
 
 const ClubsPage = () => {
+  const { data: session } = useSession();
   const router = useRouter();
+  const [clubs, setClubs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    console.log(session)
+    const fetchClubs = async () => {
+      try {
+        const response = await fetch(`/api/clubs/${session?.user.cid}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch clubs data');
+        }
+        const data = await response.json();
+        const clubsArray = Array.isArray(data) ? data : [data];
+
+        // Transform data to match expected format if necessary
+        const transformedClubs = clubsArray.map((club) => ({
+          id: club.clubid,
+          title: club.clubname,
+          description: club.clubdescription,
+          imageUrl: club.clubimage || '/images/logos/ACM_logo.jpg', // Use a default image if `clubimage` is null
+        }));
+        
+        setClubs(transformedClubs);
+        console.log('Clubs:', transformedClubs);
+      } catch (error) {
+        console.error('Error fetching clubs:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchClubs();
+  }, []);
 
   const handleCardClick = (clubId: number) => {
     // This navigates to the Dashboard page with the `clubId` as query param
     router.push(`/Member/Dashboard?clubId=${clubId}`);
   };
+  if (isLoading) {
+    return <Typography>Loading...</Typography>;
+  }
 
   return (
     <Box sx={{ padding: 1 }}>

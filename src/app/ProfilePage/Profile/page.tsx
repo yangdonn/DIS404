@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, useEffect, ChangeEvent } from "react";
 import {
   Box,
   Avatar,
@@ -17,17 +17,16 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import { useSession } from "next-auth/react";
 
-// Define a type for the profile data fields
 type ProfileData = {
   name: string;
   email: string;
   department: string;
   city: string;
-  password: string;
+  currentPassword: string;
 };
 
-// Define a type for the edit mode state
 type EditMode = {
   name: boolean;
   email: boolean;
@@ -37,6 +36,7 @@ type EditMode = {
 };
 
 const ProfilePage = () => {
+  const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState<EditMode>({
     name: false,
     email: false,
@@ -46,11 +46,11 @@ const ProfilePage = () => {
   });
 
   const [profileData, setProfileData] = useState<ProfileData>({
-    name: "User Name",
-    email: "02210231.cst@rub.edu.bt",
-    department: "Information Technology",
-    city: "Rinchending",
-    password: "********",
+    name: "",
+    email: "",
+    department: "",
+    city: "",
+    currentPassword: "",
   });
 
   const [profilePicture, setProfilePicture] = useState<string>("/images/profile/user-1.jpg");
@@ -59,6 +59,32 @@ const ProfilePage = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      if (!session) return;
+
+      try {
+        const response = await fetch(`/api/profile/${session.user.mid}`);
+        const data = await response.json();
+
+        // Assuming API returns an array with the user data at index 0
+        const userData = data[0];
+
+        setProfileData({
+          name: userData.lusername || "",
+          email: `${userData.mid}.cst@rub.edu.bt` || "",
+          department: userData.status || "",
+          city: "Rinchending", // Assuming city is static or hardcoded
+          currentPassword : userData.password || "",
+        });
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      }
+    };
+
+    fetchProfileData();
+  }, [session]);
 
   const handleEditToggle = (field: keyof ProfileData) => {
     setIsEditing((prev) => ({ ...prev, [field]: !prev[field] }));
@@ -88,10 +114,6 @@ const ProfilePage = () => {
     });
   };
 
-  const handleBack = () => {
-    window.history.back();
-  };
-
   const handleChangePassword = () => {
     if (newPassword !== confirmNewPassword) {
       alert("New passwords do not match. Please try again.");
@@ -109,151 +131,71 @@ const ProfilePage = () => {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        padding: 4,
-        backgroundColor: "#f5f5f5",
-      }}
-    >
+    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", padding: 4, backgroundColor: "#f5f5f5" }}>
       <Paper elevation={3} sx={{ padding: 4, width: "100%", maxWidth: 600, position: "relative" }}>
-        <IconButton onClick={handleBack} sx={{ position: "absolute", top: 8, left: 8 }}>
+        <IconButton onClick={() => window.history.back()} sx={{ position: "absolute", top: 8, left: 8 }}>
           <ArrowBackIcon />
         </IconButton>
 
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <Avatar
-            src={profilePicture}
-            alt="Profile Picture"
-            sx={{ width: 120, height: 120, marginBottom: 2 }}
-          />
-          <input
-            accept="image/*"
-            id="profile-picture-upload"
-            type="file"
-            style={{ display: "none" }}
-            onChange={handlePictureChange}
-          />
+          <Avatar src={profilePicture} alt="Profile Picture" sx={{ width: 120, height: 120, marginBottom: 2 }} />
+          <input accept="image/*" id="profile-picture-upload" type="file" style={{ display: "none" }} onChange={handlePictureChange} />
           <label htmlFor="profile-picture-upload">
             <Button variant="outlined" component="span" sx={{ mb: 3 }}>
               Edit Picture
             </Button>
           </label>
 
-          <TextField
-            fullWidth
-            value={profileData.name}
-            onChange={(e) => handleInputChange("name", e.target.value)}
-            onClick={() => handleEditToggle("name")}
+          <TextField 
+            fullWidth value={profileData.name}
+            onChange={(e) => handleInputChange("name", e.target.value)} 
+            onClick={() => handleEditToggle("name")} 
             InputProps={{ readOnly: !isEditing.name }}
-            label="Username"
-            variant="outlined"
-            sx={{ mb: 2 }}
+            label="Username" 
+            variant="outlined" 
+            sx={{ mb: 2 }} 
           />
 
-          <TextField
-            fullWidth
+          <TextField 
+            fullWidth 
             value={profileData.email}
             onChange={(e) => handleInputChange("email", e.target.value)}
-            onClick={() => handleEditToggle("email")}
-            InputProps={{ readOnly: !isEditing.email }}
-            label="Email"
-            variant="outlined"
-            sx={{ mb: 2 }}
+            onClick={() => handleEditToggle("email")} 
+            InputProps={{ readOnly: !isEditing.email }} 
+            label="Email" 
+            variant="outlined" 
+            sx={{ mb: 2 }} 
           />
 
-          <TextField
-            fullWidth
-            value={profileData.department}
-            onChange={(e) => handleInputChange("department", e.target.value)}
-            onClick={() => handleEditToggle("department")}
-            InputProps={{ readOnly: !isEditing.department }}
-            label="Department"
-            variant="outlined"
-            sx={{ mb: 2 }}
+          <TextField 
+            fullWidth 
+            value={profileData.department} 
+            onChange={(e) => handleInputChange("department", e.target.value)} 
+            onClick={() => handleEditToggle("department")} 
+            InputProps={{ readOnly: !isEditing.department }} 
+            label="Status" 
+            variant="outlined" 
+            sx={{ mb: 2 }} 
+            disabled 
           />
 
-          <TextField
-            fullWidth
-            value={profileData.city}
-            onChange={(e) => handleInputChange("city", e.target.value)}
-            onClick={() => handleEditToggle("city")}
-            InputProps={{ readOnly: !isEditing.city }}
-            label="City/Town"
-            variant="outlined"
-            sx={{ mb: 2 }}
-          />
+          {/* <TextField fullWidth value={profileData.city} onChange={(e) => handleInputChange("city", e.target.value)} onClick={() => handleEditToggle("city")} InputProps={{ readOnly: !isEditing.city }} label="City/Town" variant="outlined" sx={{ mb: 2 }} /> */}
 
-          {/* Password Change Dropdown */}
-          <Box sx={{ width: "100%", mb: 2 }}>
-            <Button
-              variant="outlined"
-              fullWidth
-              onClick={() => setShowChangePassword(!showChangePassword)}
-              endIcon={showChangePassword ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-              sx={{mb:2}}
-            >
-              Change Password
+          <Button variant="outlined" fullWidth onClick={() => setShowChangePassword(!showChangePassword)} endIcon={showChangePassword ? <ExpandLessIcon /> : <ExpandMoreIcon />} sx={{ mb: 2 }}>
+            Change Password
+          </Button>
+
+          <Collapse in={showChangePassword}>
+            <TextField fullWidth type="password" label="Current Password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} sx={{ mb: 2 }} />
+
+            <TextField fullWidth type={showPassword ? "text" : "password"} label="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} sx={{ mb: 2 }} InputProps={{ endAdornment: <InputAdornment position="end"><IconButton onClick={() => setShowPassword(!showPassword)} edge="end">{showPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment> }} />
+
+            <TextField fullWidth type="password" label="Confirm New Password" value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} sx={{ mb: 2 }} />
+
+            <Button variant="contained" color="primary" fullWidth onClick={handleChangePassword} sx={{ mt: 2 }}>
+              Save New Password
             </Button>
-            <Collapse in={showChangePassword}>
-              {/* <Typography variant="body2" color="textSecondary" sx={{ mt: 2, mb: 1 }}>
-                Your new password must be at least 8 characters long, contain one uppercase letter,
-                one lowercase letter, one number, and one special character.
-              </Typography> */}
-
-              <TextField
-                fullWidth
-                type="password"
-                label="Current Password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                sx={{mb: 2 }}
-              />
-
-              <TextField
-                fullWidth
-                type={showPassword ? "text" : "password"}
-                label="New Password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                sx={{ mb: 2 }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setShowPassword(!showPassword)}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
-              <TextField
-                fullWidth
-                type="password"
-                label="Confirm New Password"
-                value={confirmNewPassword}
-                onChange={(e) => setConfirmNewPassword(e.target.value)}
-                sx={{ mb: 2 }}
-              />
-
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={handleChangePassword}
-                sx={{ mt: 2 }}
-              >
-                Save New Password
-              </Button>
-            </Collapse>
-          </Box>
+          </Collapse>
 
           <Button variant="contained" color="primary" onClick={handleSave} sx={{ mt: 3 }}>
             Save Profile
