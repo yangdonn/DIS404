@@ -51,6 +51,7 @@ const EventCards: React.FC<EventCardsProps> = ({ mode }) => {
         const [firstName, lastName] = member.stdname.split(" "); // Split the name into first and last
 
         return {
+          id: member.stdid,
           name: member.stdname,
           studentId: member.stdid,
           department: programMap[member.pid] || "Unknown",
@@ -95,7 +96,7 @@ const EventCards: React.FC<EventCardsProps> = ({ mode }) => {
   };
   
 
-  const handleSetAttendanceData = (eventId: number, data: typeof initialData) => {
+  const handleSetAttendanceData = (eventId: string, data: typeof initialData) => {
     setAttendanceData((prevData) => ({ ...prevData, [eventId]: data }));
   };
 
