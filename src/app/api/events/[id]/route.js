@@ -54,7 +54,7 @@ export const DELETE = async (req, { params }) => {
         return new Response('Event delted sucessfully', { status: 200 });
         
     } catch (error) {
-        console.log('Error delteing the event', { status: 500 });
+        console.log(error, { status: 500 });
         return new Response('Error Deleting Event', { status: 500 });
     }
 }
