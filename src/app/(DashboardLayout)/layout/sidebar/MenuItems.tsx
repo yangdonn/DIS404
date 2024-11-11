@@ -46,7 +46,7 @@ const Menuitems = [
     id: uniqueId(),
     title: "Attendance",
     icon: IconListNumbers,
-    href: "/Attendance", 
+    href: "/Attendance",
   },
   {
     id: uniqueId(),

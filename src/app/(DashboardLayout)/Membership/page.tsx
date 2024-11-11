@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { Snackbar, Alert } from "@mui/material";
 import { styles } from "./style";
 import * as XLSX from "xlsx";
 import { MemberData } from "./interfaces/MemberData";
 import { Member } from "./interfaces/Member";
 import Modal from "./Modal";
 import { FiEdit2, FiTrash2, FiSearch, FiPlus } from "react-icons/fi";
+import ConfirmationModal from "./ConfirmationModal";
 
 const MembersTable = () => {
   const { data: session } = useSession();
@@ -19,6 +21,15 @@ const MembersTable = () => {
   const [sortCriteria, setSortCriteria] = useState("");
   const [jsonData, setJsonData] = useState([]);
 
+  const [isConfirmationModalVisible, setConfirmationModalVisible] =
+    useState(false);
+  const [memberToDelete, setMemberToDelete] = useState<string | null>(null);
+
+  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
+  const handleCloseSnackbar = () => {
+    setSnackbarMessage(null);
+  };
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const membersPerPage = 10; // Number of members per page
@@ -26,6 +37,18 @@ const MembersTable = () => {
 
   const handlePageClick = (pageNumber) => {
     setCurrentPage(pageNumber);
+  };
+
+  // Open the confirmation modal with the specific member to delete
+  const openConfirmationModal = (studentnum: string) => {
+    setMemberToDelete(studentnum);
+    setConfirmationModalVisible(true);
+  };
+
+  // Close the confirmation modal without deleting
+  const closeConfirmationModal = () => {
+    setConfirmationModalVisible(false);
+    setMemberToDelete(null);
   };
 
   const pageNumbers = [];
@@ -131,7 +154,8 @@ const MembersTable = () => {
           body: JSON.stringify(member),
         });
         console.log(JSON.stringify(member));
-
+        setSnackbarMessage("Club members details imported successfully");
+        fetchMembers(session.user.mid);
         if (response.ok) {
           console.log(`Member ${member.stdID} added successfully`);
         } else {
@@ -197,7 +221,8 @@ const MembersTable = () => {
       if (response.ok) {
         setMembers((prev) => [...prev, updatedMember]);
         setModalVisible(false); // Close the modal after adding
-        alert("Member added successfully");
+        // alert("Member added successfully");
+        setSnackbarMessage("Member Added successfully");
       } else {
         alert("Failed to add member. Please try again.");
       }
@@ -249,7 +274,7 @@ const MembersTable = () => {
           )
         );
         setModalVisible(false); // Close the modal after submission
-        alert("Member Edited successfully");
+        setSnackbarMessage("Edit successful");
       } else {
         alert("Failed to Edit member. Please try again.");
       }
@@ -258,27 +283,29 @@ const MembersTable = () => {
       alert("An error occurred. Please try again later.");
     }
   };
-  // Delete member function
-  const handleDeleteMember = async (studentnum: string) => {
-    try {
-      // Send a DELETE request to the API to remove the member from the database
-      const response = await fetch(`/api/members/${studentnum}`, {
-        method: "DELETE",
-      });
 
-      // Check if the deletion was successful
-      if (response) {
-        // Filter out the member whose studentnum matches
-        setMembers((prev) =>
-          prev.filter((member) => member.studentnum !== studentnum)
-        );
-        alert("Member deleted successfully");
-      } else {
-        alert("Error deleting member");
+  // Confirm deletion
+  const handleDeleteMember = async () => {
+    if (memberToDelete) {
+      try {
+        const response = await fetch(`/api/members/${memberToDelete}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          setMembers((prev) =>
+            prev.filter((member) => member.studentnum !== memberToDelete)
+          );
+          // alert("Member deleted successfully");
+          setSnackbarMessage("Member deleted successfully");
+        } else {
+          alert("Error deleting member");
+        }
+      } catch (error) {
+        console.error("Error deleting member:", error);
+        alert("Failed to delete member");
       }
-    } catch (error) {
-      console.error("Error deleting member:", error);
-      alert("Failed to delete member");
+      closeConfirmationModal(); // Close the modal after deletion
     }
   };
 
@@ -435,7 +462,7 @@ const MembersTable = () => {
                     ></FiEdit2>
 
                     <FiTrash2
-                      onClick={() => handleDeleteMember(member.studentnum)}
+                      onClick={() => openConfirmationModal(member.studentnum)}
                       style={{
                         fontSize: "1rem",
                         color: "red",
@@ -459,6 +486,28 @@ const MembersTable = () => {
         memberData={currentMember} // Pass current member data for editing
         mode={mode} // Pass the mode (add or edit)
       />
+
+      <ConfirmationModal
+        isVisible={isConfirmationModalVisible}
+        onClose={closeConfirmationModal}
+        onConfirm={handleDeleteMember}
+        message="Are you sure you want to delete this member?"
+      />
+
+      <Snackbar
+        open={!!snackbarMessage}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
