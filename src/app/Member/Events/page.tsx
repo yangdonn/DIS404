@@ -20,6 +20,8 @@ import {
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import LinearWithValueLabel from "../../(DashboardLayout)/loading";
+import { set } from "lodash";
 // Define the types for the OutlinedCard component props
 interface OutlinedCardProps {
   eventID: string;
@@ -203,6 +205,7 @@ const FeedbackDialog: React.FC<{
 const CardGrid: React.FC = () => {
   const { data: session } = useSession();
   const [cardsData, setCardsData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -228,6 +231,8 @@ const CardGrid: React.FC = () => {
         setCardsData(transformedEvents);
       } catch (error) {
         console.error("Error fetching events:", error);
+      } finally{
+        setIsLoading(false);
       }
     };
 
@@ -243,7 +248,14 @@ const CardGrid: React.FC = () => {
   } | null>(null);
   const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
-
+  if (isLoading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <LinearWithValueLabel />
+      </Box>
+    );
+    
+  }
   const handleFeedback = (event: {
     eventID: string;
     eventName: string;

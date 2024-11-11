@@ -11,7 +11,8 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
-import { Alert, Snackbar } from "@mui/material";
+import { Alert, Box, Snackbar } from "@mui/material";
+import LinearWithValueLabel from "../loading";
 
 const Calendar = () => {
   const {data: session} = useSession();
@@ -21,6 +22,7 @@ const Calendar = () => {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showAddEvent, setShowAddEvent] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [newEvent, setNewEvent] = useState({
     eventname: "",
     date: "",
@@ -28,7 +30,7 @@ const Calendar = () => {
     category: "Formal",
     location: "",
     description: "",
-    image: null,
+    image: "",
   });
   const [editingEvent, setEditingEvent] = useState(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -55,17 +57,27 @@ const Calendar = () => {
           category: event.edresscode, // You may adjust this based on your API data
           location: event.evenue,
           description: event.edescription,
-          image: null,
+          image: event.imageurl || './images/logos/event.jpg', // Use default image if none provided
         }));
         setEvents(formattedEvents);
         console.log(formattedEvents)
       } catch (error) {
         console.error("Error fetching events:", error);
+      } finally{
+        setIsLoading(false);
       }
     };
 
     fetchEvents();
   }, []);
+  if (isLoading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <LinearWithValueLabel />
+      </Box>
+    );
+    
+  }
 
   const daysInMonth = new Date(displayedYear, displayedMonth + 1, 0).getDate();
   const firstDayOfMonth = new Date(displayedYear, displayedMonth, 1).getDay();

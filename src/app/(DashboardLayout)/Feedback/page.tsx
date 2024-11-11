@@ -4,6 +4,8 @@ import { Grid, Card, CardActionArea, CardMedia, CardContent, Typography, Box, Ca
 import { useEffect } from 'react';
 import { eventNames } from 'process';
 import { useSession } from 'next-auth/react';
+import LinearWithValueLabel from "../loading";
+import { useState } from 'react';
 // Define the types for the OutlinedCard component props
 interface OutlinedCardProps {
   eventName: string;
@@ -140,6 +142,11 @@ const FeedbackViewDialog: React.FC<{
 const CardGrid: React.FC = () => {
   const { data: session } = useSession();
   const [cardsData, setCardsData] = React.useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedEvent, setSelectedEvent] = React.useState<{ eventName: string; venue: string; dresscode: string; date: Date } | null>(null);
+  const [feedbackDialogOpen, setFeedbackDialogOpen] = React.useState(false);
+  const [feedbacks, setFeedbacks] = React.useState<Feedback[]>([]);
+  const [snackbarMessage, setSnackbarMessage] = React.useState<string | null>(null);
   useEffect(() => {
     const fetchEvents = async () => {
       if (!session) return; // Wait until session is available
@@ -164,16 +171,23 @@ const CardGrid: React.FC = () => {
         setCardsData(transformedEvents);
       } catch (error) {
         console.error('Error fetching events:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchEvents();
   }, [session]);
+    if (isLoading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <LinearWithValueLabel />
+      </Box>
+    );
+    
+  }
 
-  const [selectedEvent, setSelectedEvent] = React.useState<{ eventName: string; venue: string; dresscode: string; date: Date } | null>(null);
-  const [feedbackDialogOpen, setFeedbackDialogOpen] = React.useState(false);
-  const [feedbacks, setFeedbacks] = React.useState<Feedback[]>([]);
-  const [snackbarMessage, setSnackbarMessage] = React.useState<string | null>(null);
+  
 
   const handleViewFeedback = async (event) => {
     try {
